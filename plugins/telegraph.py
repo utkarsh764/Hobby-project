@@ -1,7 +1,3 @@
-# Don't Remove Credit @VJ_Botz
-# Subscribe YouTube Channel For Amazing Bot @Tech_VJ
-# Ask Doubt on telegram @KingVJ01
-
 
 import os
 import requests
@@ -44,7 +40,7 @@ async def telegraph_upload(bot, update):
         text=f"<b>Link 🔗 :-\n\n{image_url}</b>",
         disable_web_page_preview=True,
         reply_markup=InlineKeyboardMarkup( [[
-            InlineKeyboardButton(text="🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url=image_url)
+            InlineKeyboardButton(text="🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url="https://t.me/axa_bachha")
             ]])
         )
     
