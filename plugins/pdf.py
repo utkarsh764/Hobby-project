@@ -89,7 +89,7 @@ async def merge_files(client: Client, message: Message):
     pending_filename_requests[user_id] = {"filename_request": True}
 
 
-@Client.on_message(filters.text & filters.private & ~filters.regex("https://t.me/"))
+@Client.on_message(filters.text & filters.private & ~filters.command(["start"]) & ~filters.regex("https://t.me/"))
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
 
