@@ -3,6 +3,7 @@ import os
 import re
 import logging
 import tempfile
+import asyncio
 from PIL import Image
 from pyrogram import Client, filters
 from PyPDF2 import PdfMerger
@@ -16,6 +17,25 @@ user_merge_state = {}  # Track if a user is in the merge process
 user_file_metadata = {}  # Store metadata for each user's files
 pending_filename_requests = {}  # Track pending filename requests
 
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Progress Bar Function
+async def show_progress_bar(progress_message, current, total, bar_length=10):
+    """
+    Display a text-based progress bar.
+    :param progress_message: The message object to edit.
+    :param current: Current progress (e.g., files processed so far).
+    :param total: Total number of items to process.
+    :param bar_length: Length of the progress bar in characters.
+    """
+    progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
+    filled_length = int(bar_length * progress)
+    bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
+    percentage = int(progress * 100)
+    text = f"**🛠️ Merging files...**\n`[{bar}]` {percentage}% ({current}/{total})"
+    await progress_message.edit_text(text)
+
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Start File Collection
 @Client.on_message(filters.command(["merge"]))
 async def start_file_collection(client: Client, message: Message):
     user_id = message.from_user.id
@@ -25,6 +45,15 @@ async def start_file_collection(client: Client, message: Message):
         "**📤 Uᴘʟᴏᴀᴅ ʏᴏᴜʀ ғɪʟᴇs ɪɴ sᴇǫᴜᴇɴᴄᴇ, ᴛʏᴘᴇ /done ✅, ᴀɴᴅ ɢᴇᴛ ʏᴏᴜʀ ᴍᴇʀɢᴇᴅ PDF !! 🧾**"
     )
 
+    # Set a timeout to reset the merge state after 5 minutes
+    await asyncio.sleep(300)  # 300 seconds = 5 minutes
+    if user_id in user_merge_state:
+        user_merge_state.pop(user_id)
+        user_file_metadata.pop(user_id, None)
+        await message.reply_text("⏳ Merge process timed out. Please start again with /merge.")
+
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Handle PDF Files
 @Client.on_message(filters.document & filters.private)
 async def handle_pdf_metadata(client: Client, message: Message):
     user_id = message.from_user.id
@@ -57,6 +86,8 @@ async def handle_pdf_metadata(client: Client, message: Message):
         "**Sᴇɴᴅ ᴍᴏʀᴇ ғɪʟᴇs ᴏʀ ᴜsᴇ /done ✅ ᴛᴏ ᴍᴇʀɢᴇ ᴛʜᴇᴍ.**"
     )
 
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Handle Image Files
 @Client.on_message(filters.photo & filters.private)
 async def handle_image_metadata(client: Client, message: Message):
     user_id = message.from_user.id
@@ -77,26 +108,8 @@ async def handle_image_metadata(client: Client, message: Message):
         "Send more files or use /done ✅ to merge them."
     )
 
-
-
-async def show_progress_bar(progress_message, current, total, bar_length=10):
-    """
-    Display a text-based progress bar.
-    :param progress_message: The message object to edit.
-    :param current: Current progress (e.g., files processed so far).
-    :param total: Total number of items to process.
-    :param bar_length: Length of the progress bar in characters.
-    """
-    progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
-    filled_length = int(bar_length * progress)
-    bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
-    percentage = int(progress * 100)
-    text = f"**🛠️ Merging files...**\n`[{bar}]` {percentage}% ({current}/{total})"
-    await progress_message.edit_text(text)
-
-
-
-
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Merge Files
 @Client.on_message(filters.command(["done"]))
 async def merge_files(client: Client, message: Message):
     user_id = message.from_user.id
@@ -108,6 +121,8 @@ async def merge_files(client: Client, message: Message):
     await message.reply_text("✍️ Type a name for your merged PDF 📄.")
     pending_filename_requests[user_id] = {"filename_request": True}
 
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Handle Filename Input
 @Client.on_message(filters.text & filters.private & ~filters.regex("https://t.me/"))
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
@@ -213,4 +228,17 @@ async def handle_filename(client: Client, message: Message):
         user_merge_state.pop(user_id, None)
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
+
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Cancel Command
+@Client.on_message(filters.command(["stop"]))
+async def cancel_merge(client: Client, message: Message):
+    user_id = message.from_user.id
+    if user_id in user_merge_state:
+        user_merge_state.pop(user_id)
+        user_file_metadata.pop(user_id, None)
+        pending_filename_requests.pop(user_id, None)
+        await message.reply_text("✅ Merge process cancelled.")
+    else:
+        await message.reply_text("⚠️ No active merge process to cancel.")
 
