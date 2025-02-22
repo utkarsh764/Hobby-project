@@ -241,7 +241,7 @@ async def handle_private(client: Client, acc, message: Message, chatid: int, msg
         await send_to_user_and_log(client.send_voice, voice=file, caption=caption, parse_mode=enums.ParseMode.HTML)
 
     elif msg_type == "Audio":
-        thumb = custom_thumb or (await acc.download_media(msg.audio.thumbs[0].file_id) if msg.audio.thumbs else None
+        thumb = custom_thumb or (await acc.download_media(msg.audio.thumbs[0].file_id) if msg.audio.thumbs else None)
         await send_to_user_and_log(client.send_audio, audio=file, thumb=thumb, caption=caption, parse_mode=enums.ParseMode.HTML)
         if thumb:
             os.remove(thumb)
