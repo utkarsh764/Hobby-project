@@ -28,18 +28,16 @@ async def start_file_collection(client: Client, message: Message):
 async def handle_pdf_metadata(client: Client, message: Message):
     user_id = message.from_user.id
 
+    # Only accept PDFs if the user has started the merge process
+    if user_id not in user_file_metadata:
+        return
+
     if message.document.mime_type != "application/pdf":
         await message.reply_text("❌ This is not a valid PDF file. Please send a PDF 📑.")
         return
 
-    if user_id not in user_file_metadata:
-        await message.reply_text("⏳ Start the merging process first with /merge 🔄.")
-        return
-
     if len(user_file_metadata[user_id]) >= 20:
-        await message.reply_text(
-            "⚠️ You can upload up to 20 files. Type /done ✅ to merge them."
-        )
+        await message.reply_text("⚠️ You can upload up to 20 files. Type /done ✅ to merge them.")
         return
 
     if message.document.file_size > MAX_FILE_SIZE:
@@ -62,12 +60,8 @@ async def handle_pdf_metadata(client: Client, message: Message):
 async def handle_image_metadata(client: Client, message: Message):
     user_id = message.from_user.id
 
-    # Ignore images sent by the bot itself
-    if message.from_user.is_bot:
-        return
-
+    # Only accept images if the user has started the merge process
     if user_id not in user_file_metadata:
-        await message.reply_text("**⏳ Sᴛᴀʀᴛ ᴛʜᴇ ᴍᴇʀɢɪɴɢ ᴘʀᴏᴄᴇss ғɪʀsᴛ ᴡɪᴛʜ /merge 🔄.**")
         return
 
     user_file_metadata[user_id].append(
