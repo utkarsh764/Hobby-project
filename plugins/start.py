@@ -1,26 +1,3 @@
-"""
-Apache License 2.0
-Copyright (c) 2022 @PYRO_BOTZ 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-Telegram Link : https://t.me/LazyDeveloper 
-Repo Link : https://github.com/LazyDeveloperr/Gangster-Baby-Renamer-BOT
-License Link : https://github.com/LazyDeveloperr/Gangster-Baby-Renamer-BOT/blob/main/LICENSE
-"""
-
 from asyncio import sleep
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply, CallbackQuery
@@ -37,12 +14,12 @@ async def start(client, message):
     user = message.from_user
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)             
-    txt=f"**👋 ʜᴇʟʟᴏ ᴜsᴇʀ {user.mention} \n\nɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ғɪʟᴇ ʀᴇɴᴀᴍᴇʀ ᴀɴᴅ ғɪʟᴇ ᴄᴏɴᴠᴇʀᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘᴇʀᴍᴀɴᴇɴᴛ ᴀɴᴅ ᴄᴜsᴛᴏᴍ ᴛʜᴜᴍʙɴᴀɪʟ sᴜᴘᴘᴏʀᴛ.\n\nsᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ ᴏʀ ᴅᴏᴄᴜᴍᴇɴᴛ !**"
+    txt=f"**👋 Hello Developer {user.mention} \n\nI am an Advance file Renamer and file Converter BOT with permanent and custom thumbnail support.\n\nSend me any video or document !**"
     button=InlineKeyboardMarkup([[
-        InlineKeyboardButton("‼️ ᴅᴇᴠᴇʟᴏᴘᴇʀ ‼️", url='https://t.me/axa_bachha')
+        InlineKeyboardButton("🤖 Developer ", url='https://t.me/axa_bachha')
         ],[
-        InlineKeyboardButton('🕵🏻‍♀️ ᴀʙᴏᴜᴛ', callback_data='about'),
-        InlineKeyboardButton('📜 ʜᴇʟᴘ', callback_data='help')
+        InlineKeyboardButton('⚡️ About', callback_data='about'),
+        InlineKeyboardButton('🤕 Help', callback_data='help')
     ]
         ])
     if START_PIC:
@@ -84,7 +61,7 @@ async def cb_handler(client, query: CallbackQuery):
     data = query.data 
     if data == "start":
         await query.message.edit_text(
-            text=f"""**👋 ʜᴇʟʟᴏ ᴜsᴇʀ {query.from_user.mention} \n\nɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ғɪʟᴇ ʀᴇɴᴀᴍᴇʀ ᴀɴᴅ ғɪʟᴇ ᴄᴏɴᴠᴇʀᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘᴇʀᴍᴀɴᴇɴᴛ ᴀɴᴅ ᴄᴜsᴛᴏᴍ ᴛʜᴜᴍʙɴᴀɪʟ sᴜᴘᴘᴏʀᴛ.\n\nsᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ ᴏʀ ᴅᴏᴄᴜᴍᴇɴᴛ !**""",           
+            text=f"""**👋 Hello Developer {query.from_user.mention} \n\nI am an Advance file Renamer and file Converter BOT with permanent and custom thumbnail support.\n\nSend me any video or document !**""",
             reply_markup=InlineKeyboardMarkup( [[        
         InlineKeyboardButton("🤖 Developer ", url='https://t.me/axa_bachha')
         ],[
@@ -127,8 +104,4 @@ async def cb_handler(client, query: CallbackQuery):
             await query.message.reply_to_message.delete()
         except:
             await query.message.delete()
-
-
-
-
-
+            
