@@ -89,7 +89,7 @@ async def show_progress_bar(progress_message, current, total, bar_length=10):
     """
     progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
     filled_length = int(bar_length * progress)
-    bar = "🟨" * filled_length + "⬜" * (bar_length - filled_length)  # Filled and empty parts
+    bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
     percentage = int(progress * 100)
     text = f"**🛠️ Merging files...**\n`[{bar}]` {percentage}% ({current}/{total})"
     await progress_message.edit_text(text)
