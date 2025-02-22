@@ -85,11 +85,11 @@ async def merge_files(client: Client, message: Message):
         await message.reply_text("**⚠️ Yᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴀᴅᴅᴇᴅ ᴀɴʏ ғɪʟᴇs ʏᴇᴛ. Usᴇ /merge ᴛᴏ sᴛᴀʀᴛ.**")
         return
 
-    await message.reply_text("✍️ Type a name for your merged PDF 📄.")
+    await message.reply_text("**✍️ Type a name for your merged PDF 📄.**")
     pending_filename_requests[user_id] = {"filename_request": True}
 
 
-@Client.on_message(filters.text & filters.private & ~filters.command(["start"]) & ~filters.regex("https://t.me/"))
+@Client.on_message(filters.text & filters.private)
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
 
@@ -129,7 +129,7 @@ async def handle_filename(client: Client, message: Message):
         thumbnail_path = None  # No thumbnail provided
 
     # Proceed to merge the files as before
-    progress_message = await message.reply_text("🛠️ Merging your files... Please wait... 🔄")
+    progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... 🔄**")
 
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -140,14 +140,14 @@ async def handle_filename(client: Client, message: Message):
                 if file_data["type"] == "pdf":
                     file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                     merger.append(file_path)
-                    await progress_message.edit_text(f"📑 Merging PDFs {index} of {len(user_file_metadata[user_id])}...")
+                    await progress_message.edit_text(f"**📑 Merging PDFs {index} of {len(user_file_metadata[user_id])}...**")
                 elif file_data["type"] == "image":
                     img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                     image = Image.open(img_path).convert("RGB")
                     img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                     image.save(img_pdf_path, "PDF")
                     merger.append(img_pdf_path)
-                    await progress_message.edit_text(f"📸 Merging image {index} of {len(user_file_metadata[user_id])}...")
+                    await progress_message.edit_text(f"**📸 Merging image {index} of {len(user_file_metadata[user_id])}...**")
 
             merger.write(output_file)
             merger.close()
@@ -158,23 +158,23 @@ async def handle_filename(client: Client, message: Message):
                     chat_id=message.chat.id,
                     document=output_file,
                     thumb=thumbnail_path,  # Set the thumbnail
-                    caption="🎉 Here is your merged PDF 📄.",
+                    caption="**🎉 Here is your merged PDF 📄.**",
                 )
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
                     document=output_file,
-                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot**)",
+                    caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
                 )
             else:
                 await client.send_document(
                     chat_id=message.chat.id,
                     document=output_file,
-                    caption="🎉 Here is your merged PDF 📄.",
+                    caption="**🎉 Here is your merged PDF 📄.**",
                 )
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
                     document=output_file,
-                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot**)",
+                    caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
                 )
 
             await progress_message.delete()
