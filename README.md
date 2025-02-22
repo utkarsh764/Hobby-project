@@ -1,4 +1,4 @@
-<img src="https://telegra.ph/file/e01b2016af8ab7b7616dc.png" alt="logo" target="/blank">
+<img src="[gTTS==2.3.1](https://graph.org/file/ad48ac09b1e6f30d2dae4.jpg)" alt="logo" target="/blank">
 
 <h1 align="center">
  <b><a href="https://telegram.me/LazyDeveloper" target="/blank"> Gangster Baby ( Renamer BOT ) </a></>
