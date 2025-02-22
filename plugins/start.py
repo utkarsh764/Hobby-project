@@ -37,12 +37,12 @@ async def start(client, message):
     user = message.from_user
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)             
-    txt=f"👋 Hello Developer {user.mention} \n\nI am an Advance file Renamer and file Converter BOT with permanent and custom thumbnail support.\n\nSend me any video or document !"
+    txt=f"**👋 ʜᴇʟʟᴏ ᴜsᴇʀ {user.mention} \n\nɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ғɪʟᴇ ʀᴇɴᴀᴍᴇʀ ᴀɴᴅ ғɪʟᴇ ᴄᴏɴᴠᴇʀᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘᴇʀᴍᴀɴᴇɴᴛ ᴀɴᴅ ᴄᴜsᴛᴏᴍ ᴛʜᴜᴍʙɴᴀɪʟ sᴜᴘᴘᴏʀᴛ.\n\nsᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ ᴏʀ ᴅᴏᴄᴜᴍᴇɴᴛ !**"
     button=InlineKeyboardMarkup([[
-        InlineKeyboardButton("🤖 Developer ", url='https://t.me/axa_bachha')
+        InlineKeyboardButton("‼️ ᴅᴇᴠᴇʟᴏᴘᴇʀ ‼️", url='https://t.me/axa_bachha')
         ],[
-        InlineKeyboardButton('⚡️ About', callback_data='about'),
-        InlineKeyboardButton('🤕 Help', callback_data='help')
+        InlineKeyboardButton('🕵🏻‍♀️ ᴀʙᴏᴜᴛ', callback_data='about'),
+        InlineKeyboardButton('📜 ʜᴇʟᴘ', callback_data='help')
     ]
         ])
     if START_PIC:
@@ -84,7 +84,7 @@ async def cb_handler(client, query: CallbackQuery):
     data = query.data 
     if data == "start":
         await query.message.edit_text(
-            text=f"""👋 Hello Developer {query.from_user.mention} \n\nI am an Advance file Renamer and file Converter BOT with permanent and custom thumbnail support.\n\nSend me any video or document !""",
+            text=f"""**👋 ʜᴇʟʟᴏ ᴜsᴇʀ {user.mention} \n\nɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ғɪʟᴇ ʀᴇɴᴀᴍᴇʀ ᴀɴᴅ ғɪʟᴇ ᴄᴏɴᴠᴇʀᴛᴇʀ ʙᴏᴛ ᴡɪᴛʜ ᴘᴇʀᴍᴀɴᴇɴᴛ ᴀɴᴅ ᴄᴜsᴛᴏᴍ ᴛʜᴜᴍʙɴᴀɪʟ sᴜᴘᴘᴏʀᴛ.\n\nsᴇɴᴅ ᴍᴇ ᴀɴʏ ᴠɪᴅᴇᴏ ᴏʀ ᴅᴏᴄᴜᴍᴇɴᴛ !**"""
             reply_markup=InlineKeyboardMarkup( [[        
         InlineKeyboardButton("🤖 Developer ", url='https://t.me/axa_bachha')
         ],[
