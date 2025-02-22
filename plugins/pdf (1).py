@@ -9,27 +9,28 @@ from PyPDF2 import PdfMerger
 from pyrogram.types import Message
 from config import LOG_CHANNEL
 
-
 logger = logging.getLogger(__name__)
 
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
-pending_filename_requests = {}
+user_merge_state = {}  # Track if a user is in the merge process
 user_file_metadata = {}  # Store metadata for each user's files
+pending_filename_requests = {}  # Track pending filename requests
 
 @Client.on_message(filters.command(["merge"]))
 async def start_file_collection(client: Client, message: Message):
     user_id = message.from_user.id
+    user_merge_state[user_id] = True  # Set user in merge state
     user_file_metadata[user_id] = []  # Reset file list for the user
     await message.reply_text(
-        "**📤 Uᴘʟᴏᴀᴅ ʏᴏᴜʀ ғɪʟᴇs ɪɴ sᴇᴏ̨ᴜᴇɴᴄᴇ, ᴛʏᴘᴇ /done ✅, ᴀɴᴅ ɢᴇᴛ ʏᴏᴜʀ ᴍᴇʀɢᴇᴅ PDF !! 🧾**"
+        "**📤 Uᴘʟᴏᴀᴅ ʏᴏᴜʀ ғɪʟᴇs ɪɴ sᴇǫᴜᴇɴᴄᴇ, ᴛʏᴘᴇ /done ✅, ᴀɴᴅ ɢᴇᴛ ʏᴏᴜʀ ᴍᴇʀɢᴇᴅ PDF !! 🧾**"
     )
 
 @Client.on_message(filters.document & filters.private)
 async def handle_pdf_metadata(client: Client, message: Message):
     user_id = message.from_user.id
 
-    # Only accept PDFs if the user has started the merge process
-    if user_id not in user_file_metadata:
+    # Only process PDFs if the user is in the merge state
+    if user_id not in user_merge_state or not user_merge_state[user_id]:
         return
 
     if message.document.mime_type != "application/pdf":
@@ -60,8 +61,8 @@ async def handle_pdf_metadata(client: Client, message: Message):
 async def handle_image_metadata(client: Client, message: Message):
     user_id = message.from_user.id
 
-    # Only accept images if the user has started the merge process
-    if user_id not in user_file_metadata:
+    # Only process images if the user is in the merge state
+    if user_id not in user_merge_state or not user_merge_state[user_id]:
         return
 
     user_file_metadata[user_id].append(
@@ -76,7 +77,6 @@ async def handle_image_metadata(client: Client, message: Message):
         "Send more files or use /done ✅ to merge them."
     )
 
-
 @Client.on_message(filters.command(["done"]))
 async def merge_files(client: Client, message: Message):
     user_id = message.from_user.id
@@ -87,7 +87,6 @@ async def merge_files(client: Client, message: Message):
 
     await message.reply_text("✍️ Type a name for your merged PDF 📄.")
     pending_filename_requests[user_id] = {"filename_request": True}
-
 
 @Client.on_message(filters.text & filters.private & ~filters.regex("https://t.me/"))
 async def handle_filename(client: Client, message: Message):
@@ -128,7 +127,7 @@ async def handle_filename(client: Client, message: Message):
         filename_without_thumbnail = custom_filename
         thumbnail_path = None  # No thumbnail provided
 
-    # Proceed to merge the files as before
+    # Proceed to merge the files
     progress_message = await message.reply_text("🛠️ Merging your files... Please wait... 🔄")
 
     try:
@@ -189,7 +188,8 @@ async def handle_filename(client: Client, message: Message):
         await progress_message.edit_text(f"❌ Failed to merge files: {e}")
 
     finally:
+        # Clean up
+        user_merge_state.pop(user_id, None)
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
-
 
