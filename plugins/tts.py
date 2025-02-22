@@ -24,9 +24,9 @@ def convert(text):
 
 @Client.on_message(filters.command("tts"))
 async def text_to_speech(bot, message: Message):
-    vj = await bot.ask(chat_id = message.from_user.id, text = "Now send me your text.")
+    vj = await bot.ask(chat_id = message.from_user.id, text = "**ɴᴏᴡ sᴇɴᴅ ᴍᴇ ʏᴏᴜʀ ᴛᴇxᴛ. 🎙️**")
     if vj.text:
-        m = await vj.reply_text("Processing")
+        m = await vj.reply_text("**Processing...**")
         text = vj.text
         try:
             loop = get_running_loop()
@@ -39,7 +39,7 @@ async def text_to_speech(bot, message: Message):
             e = traceback.format_exc()
             print(e)
     else:
-        await vj.reply_text("Send me only text Buddy.")
+        await vj.reply_text("**Send me only text Buddy.**")
 
 
 
