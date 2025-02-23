@@ -16,6 +16,7 @@
 - `DB_NAME`  - Your database name from mongoDB. Default will be 'my'
 - `FORCE_SUB` - your force sub channel username without @ 
 - `START_PIC` - start message photo
+- `Port` - 8080
 
 
   ### 📶 DEPLOYEMENT SUPPORT
