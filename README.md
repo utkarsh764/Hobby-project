@@ -45,7 +45,9 @@
  - Developer Service 24x7. 🔥
 
 ### 🚦 Commands
-`start` - start.
+`start` - start
+
+
 `cancel` - cancel batch.
 `merge` - start merge process.
 `done` - merge PDFs .
