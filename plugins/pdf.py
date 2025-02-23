@@ -169,7 +169,7 @@ async def start_file_collection(client: Client, message: Message):
         user_merge_state.pop(user_id)
         user_file_metadata.pop(user_id, None)
         await message.reply_text("⏳ Merge process timed out. Please start again with /merge.")
-
+        
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Handle PDF Files for Merging
 @Client.on_message(filters.document & filters.private)
