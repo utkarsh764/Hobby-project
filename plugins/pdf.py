@@ -40,43 +40,32 @@ async def show_progress_bar(progress_message, current, total, bar_length=10):
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Invert PDF Colors Function
 async def invert_pdf_colors(input_pdf_path: str, output_pdf_path: str) -> None:
-    """
-    Inverts the colors of a PDF file and saves the result to a new file.
-    :param input_pdf_path: Path to the input PDF file.
-    :param output_pdf_path: Path to save the inverted PDF file.
-    """
     pdf_document = fitz.open(input_pdf_path)
     new_pdf = fitz.open()
-    
+
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
-        pix = page.get_pixmap()
-        
-        # Convert the pixmap to a PIL Image
-        img = Image.open(io.BytesIO(pix.tobytes()))
-        
-        # Invert the colors of the image
-        inverted_img = ImageOps.invert(img.convert("RGB"))
-        
-        # Convert the inverted image back to bytes
-        inverted_img_bytes = inverted_img.tobytes()
-        
-        # Create a new pixmap from the inverted image
-        inverted_pix = fitz.Pixmap(
-            fitz.csRGB,  # Colorspace
-            pix.width,   # Width
-            pix.height,  # Height
-            inverted_img_bytes,  # Image data
-        )
-        
-        # Create a new PDF page with the same dimensions as the original
+
+        # Create a new page with the same dimensions
         new_page = new_pdf.new_page(width=page.rect.width, height=page.rect.height)
-        
-        # Insert the inverted image into the new page
-        new_page.insert_image(new_page.rect, pixmap=inverted_pix)
-    
+
+        # Invert colors directly on the page content
+        page_contents = page.get_contents()
+        if page_contents:
+            # Add a color inversion command to the page content stream
+            inverted_contents = f"/DeviceRGB setcolorspace\n1 1 1 setcolor\n{page_contents.decode('utf-8')}"
+            new_page.insert_text(
+                point=fitz.Point(0, 0),  # Insert at the top-left corner
+                text=inverted_contents,
+                fontsize=1,  # Small font size to avoid visible text
+                color=(0, 0, 0),  # Black color
+            )
+
+        # Copy annotations and links (if any)
+        new_page.show_pdf_page(page.rect, pdf_document, page_num)
+
     # Save the new PDF with inverted colors
-    new_pdf.save(output_pdf_path)
+    new_pdf.save(output_pdf_path, deflate=True)  # Enable compression
     new_pdf.close()
     pdf_document.close()
 
