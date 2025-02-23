@@ -10,6 +10,7 @@ from PyPDF2 import PdfMerger
 from pyrogram.types import Message
 from config import LOG_CHANNEL
 import fitz  # PyMuPDF
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
 user_merge_state = {}  # Track if a user is in the merge process
 user_file_metadata = {}  # Store metadata for each user's files
 pending_filename_requests = {}  # Track pending filename requests
+user_invert_state = {}  # Track if a user is in the invert process
 
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Progress Bar Function
@@ -66,9 +68,26 @@ async def handle_invert_command(client: Client, message: Message):
     user_id = message.from_user.id
     logger.info(f"User {message.from_user.first_name} ({user_id}) requested /invert")
 
-    # Check if the message contains a PDF
-    if not message.document or not message.document.mime_type == "application/pdf":
-        await message.reply_text("❌ Please send a PDF file to invert its colors.")
+    # Set user in invert state
+    user_invert_state[user_id] = True
+    await message.reply_text("📤 Please send the PDF file to invert its colors.")
+
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Handle PDF Files for Inversion
+@Client.on_message(filters.document & filters.private)
+async def handle_pdf_for_inversion(client: Client, message: Message):
+    user_id = message.from_user.id
+
+    # Only process PDFs if the user is in the invert state
+    if user_id not in user_invert_state or not user_invert_state[user_id]:
+        return
+
+    if message.document.mime_type != "application/pdf":
+        await message.reply_text("❌ This is not a valid PDF file. Please send a PDF 📑.")
+        return
+
+    if message.document.file_size > MAX_FILE_SIZE:
+        await message.reply_text("🚫 File size is too large! Please send a file under 20MB.")
         return
 
     # Notify user that processing has started
@@ -110,6 +129,10 @@ async def handle_invert_command(client: Client, message: Message):
         logger.error(f"Error inverting PDF: {e}")
         await progress_message.edit_text(f"❌ Failed to invert PDF: {e}")
 
+    finally:
+        # Clean up
+        user_invert_state.pop(user_id, None)
+
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Start File Collection
 @Client.on_message(filters.command(["merge"]))
@@ -129,7 +152,7 @@ async def start_file_collection(client: Client, message: Message):
         await message.reply_text("⏳ Merge process timed out. Please start again with /merge.")
 
 #————————————————————————————————————————————————————————————————————————————————————————————
-# Handle PDF Files
+# Handle PDF Files for Merging
 @Client.on_message(filters.document & filters.private)
 async def handle_pdf_metadata(client: Client, message: Message):
     user_id = message.from_user.id
@@ -163,7 +186,7 @@ async def handle_pdf_metadata(client: Client, message: Message):
     )
 
 #————————————————————————————————————————————————————————————————————————————————————————————
-# Handle Image Files
+# Handle Image Files for Merging
 @Client.on_message(filters.photo & filters.private)
 async def handle_image_metadata(client: Client, message: Message):
     user_id = message.from_user.id
@@ -318,4 +341,3 @@ async def cancel_merge(client: Client, message: Message):
     else:
         await message.reply_text("⚠️ No active merge process to cancel.")
 
-  
