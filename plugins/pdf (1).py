@@ -258,16 +258,3 @@ async def handle_filename(client: Client, message: Message):
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
 
-#————————————————————————————————————————————————————————————————————————————————————————————
-# Stop Command
-@Client.on_message(filters.command(["stop"]))
-async def stop_merge(client: Client, message: Message):
-    user_id = message.from_user.id
-    if user_id in user_merge_state:
-        user_merge_state.pop(user_id)
-        user_file_metadata.pop(user_id, None)
-        pending_filename_requests.pop(user_id, None)
-        await message.reply_text("**✅ Merge process stopped.**")
-    else:
-        await message.reply_text("**⚠️ No active merge process to stop.**")
-
