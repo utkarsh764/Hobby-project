@@ -23,6 +23,24 @@ async def reset_user_state(user_id: int):
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
         logger.info(f"Reset state for user {user_id} due to inactivity.")
+        
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Progress Bar Function
+async def show_progress_bar(progress_message, current, total, bar_length=10):
+    """
+    Display a text-based progress bar.
+    :param progress_message: The message object to edit.
+    :param current: Current progress (e.g., files processed so far).
+    :param total: Total number of items to process.
+    :param bar_length: Length of the progress bar in characters.
+    """
+    progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
+    filled_length = int(bar_length * progress)
+    bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
+    percentage = int(progress * 100)
+    text = f"**🛠️ Processing...**\n`[{bar}]` {percentage}% ({current}/{total})"
+    await progress_message.edit_text(text)
+
 
 @Client.on_message(filters.command(["merge"]))
 async def start_file_collection(client: Client, message: Message):
