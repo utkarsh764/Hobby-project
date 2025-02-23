@@ -8,8 +8,8 @@
 
 
 ### ⚡️ Configs 
-- BOT_TOKEN  - Get bot token from @BotFather
-- API_ID - Get api id From my.telegram.org 
+- `BOT_TOKEN`  - Get bot token from @BotFather
+- `API_ID` - Get api id From my.telegram.org 
 - `API_HASH` - From my.telegram.org 
 - `ADMIN` - AUTH or bot controllers id's multiple id use space to split 
 - `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
