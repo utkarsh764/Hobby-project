@@ -12,20 +12,21 @@ async def start(client, message):
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
     
-    txt=f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
-    f"**🔋 ɪ ᴀᴍ ᴀ ᴘᴏᴡᴇʀꜰᴜʟ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
-    f"**🔘 Usᴇ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**"
+    txt = (
+        f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
+        f"**🔋 ɪ ᴀᴍ ᴀ ᴘᴏᴡᴇʀꜰᴜʟ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
+        f"**🔘 Usᴇ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**"
+    )
     
     button = InlineKeyboardMarkup([
         [InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url='https://t.me/axa_bachha')],
         [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'),
          InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
-    ])
-    
+    ])    
     if START_PIC:
         await message.reply_photo(START_PIC, caption=txt, reply_markup=button)
     else:
-        await message.reply_text(text=txt, reply_markup=button, disable_web_page_preview=True)
+        await message.reply_text(text=txt, reply_markup=button, disable_web_page_preview=True) 
 
 # Logs Command
 @Client.on_message(filters.command('logs') & filters.user(ADMIN))
