@@ -46,14 +46,21 @@
 
 ### 🚦 Commands
 `start` - start
+
 `cancel` - cancel batch
+
 `merge` - start merge process.
+
 `done` - merge PDFs .
-`stop` - stop merging.
+
 `telegraph` - telegraph link .
+
 `stickerid` - sticker id.
-`accept` - accept preding requests.
+
+`accept` - accept preding join requests.
+
 `users` - Check total users in DB.
+
 `broadcast` - Send message to users.
 
 `/users` - To view list of users, using BOT [FOR ADMINS USE ONLY]
