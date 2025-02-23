@@ -99,7 +99,7 @@ async def handle_pdf_for_inversion(client: Client, message: Message):
         return
 
     # Notify user that processing has started
-    progress_message = await message.reply_text("🛠️ Inverting colors... Please wait... 🔄")
+    progress_message = await message.reply_text("**🛠️ Inverting colors... Please wait... ⏰**")
 
     try:
         # Download the PDF
