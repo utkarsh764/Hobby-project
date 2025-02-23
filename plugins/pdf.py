@@ -228,12 +228,11 @@ async def merge_files(client: Client, message: Message):
 
     await message.reply_text("✍️ Type a name for your merged PDF 📄.")
     pending_filename_requests[user_id] = {"filename_request": True}
-    
-    finally:
-        # Reset all states
-        user_merge_state.pop(user_id, None)
-        user_file_metadata.pop(user_id, None)
-        pending_filename_requests.pop(user_id, None)
+
+    # Reset all states
+    user_merge_state.pop(user_id, None)
+    user_file_metadata.pop(user_id, None)
+    pending_filename_requests.pop(user_id, None)
         
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Handle Filename Input
