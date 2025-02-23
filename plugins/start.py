@@ -4,12 +4,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQ
 from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
-
-import logging
 import random
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
 
 # Start command handler
 @Client.on_message(filters.private & filters.command("start"))
