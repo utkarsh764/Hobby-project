@@ -29,7 +29,7 @@ async def invert_pdf_colors(input_pdf_path: str, output_pdf_path: str) -> None:
         pix = page.get_pixmap()
 
         # Convert the pixmap to a PIL Image
-        img = Image.open(io.BytesIO(pix.tobytes())
+        img = Image.open(io.BytesIO(pix.tobytes()))
 
         # Invert the colors of the image
         inverted_img = ImageOps.invert(img.convert("RGB"))
