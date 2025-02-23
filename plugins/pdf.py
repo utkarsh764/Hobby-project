@@ -18,7 +18,7 @@ user_file_metadata = {}  # Store metadata for each user's files
 
 # Reset state after 5 minutes of inactivity
 async def reset_user_state(user_id: int):
-    await asyncio.sleep(300)  # 5 minutes
+    await asyncio.sleep(120)  # 2 minutes
     if user_id in user_file_metadata:
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
