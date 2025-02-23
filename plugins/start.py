@@ -57,8 +57,18 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton("• Join Request Acceptor •", callback_data="request")],
             [InlineKeyboardButton("📃 PDF Merging 📃", callback_data="combiner")],
             [InlineKeyboardButton("🪄 Restricted Content Saver 🪄", callback_data="restricted")],
-            [InlineKeyboardButton("🔒 Close", callback_data="close"),
-             InlineKeyboardButton("◀️ Back", callback_data="start")]
+            [ 
+             InlineKeyboardButton('ᴛᴇʟᴇɢʀᴀᴘʜ', callback_data='tele'),   
+             InlineKeyboardButton('sᴛʀᴇᴀᴍ/ᴅᴏᴡɴʟᴏᴀᴅ', callback_data='s_txt') 
+         ], [ 
+             InlineKeyboardButton('ᴄᴏɴɴᴇᴄᴛɪᴏɴꜱ', callback_data='coct'), 
+             InlineKeyboardButton('ꜰɪʟᴛᴇʀꜱ', callback_data='filters')
+         ], [
+             InlineKeyboardButton('ꜱᴛɪᴄᴋᴇʀ-ɪᴅ', callback_data='sticker'),
+             InlineKeyboardButton('ᴊ-ꜱᴏɴ', callback_data='json')
+         ], [             
+             InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start')
+        ]
         ])
     
     elif data == "about":
