@@ -53,19 +53,13 @@ async def cb_handler(client: Client, query: CallbackQuery):
     elif data == "help":
         txt = mr.HELP_TXT
         reply_markup = InlineKeyboardMarkup([
-            [InlineKeyboardButton("❣️ Contact Admin ❣️", url="https://t.me/axa_bachha")],
-            [InlineKeyboardButton("• Join Request Acceptor •", callback_data="request")],
-            [InlineKeyboardButton("📃 PDF Merging 📃", callback_data="combiner")],
-            [InlineKeyboardButton("🪄 Restricted Content Saver 🪄", callback_data="restricted")],
+            [InlineKeyboardButton("ᴄᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ 🕵🏻‍♀️", url="https://t.me/axa_bachha")],
+            [InlineKeyboardButton("ʀᴇᴏ̨ᴜᴇsᴛ ᴀᴄᴄᴇᴘᴛᴏʀ", callback_data="request"),
+            InlineKeyboardButton("ᴍᴇʀɢᴇ 📄", callback_data="combiner")],
+            [InlineKeyboardButton("ʀᴇsᴛʀɪᴄᴛᴇᴅ ᴄᴏɴᴛᴇɴᴛ sᴀᴠᴇʀ", callback_data="restricted")],
             [ 
              InlineKeyboardButton('ᴛᴇʟᴇɢʀᴀᴘʜ', callback_data='tele'),   
-             InlineKeyboardButton('sᴛʀᴇᴀᴍ/ᴅᴏᴡɴʟᴏᴀᴅ', callback_data='s_txt') 
-         ], [ 
-             InlineKeyboardButton('ᴄᴏɴɴᴇᴄᴛɪᴏɴꜱ', callback_data='coct'), 
-             InlineKeyboardButton('ꜰɪʟᴛᴇʀꜱ', callback_data='filters')
-         ], [
-             InlineKeyboardButton('ꜱᴛɪᴄᴋᴇʀ-ɪᴅ', callback_data='sticker'),
-             InlineKeyboardButton('ᴊ-ꜱᴏɴ', callback_data='json')
+             InlineKeyboardButton('ꜱᴛɪᴄᴋᴇʀ-ɪᴅ', callback_data='sticker') 
          ], [             
              InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start')
         ]
@@ -88,6 +82,42 @@ async def cb_handler(client: Client, query: CallbackQuery):
         return
     
     await query.message.edit_text(text=txt, reply_markup=reply_markup, disable_web_page_preview=True)
+    
+    elif query.data == "sticker":
+        btn = [[
+            InlineKeyboardButton("⟸ Bᴀᴄᴋ", callback_data="help"),
+            InlineKeyboardButton("Cᴏɴᴛᴀᴄᴛ", url="telegram.me/axa_bachha")
+        ]]
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        reply_markup = InlineKeyboardMarkup(btn)
+        await query.message.edit_text(
+            text=(STICKER_TXT),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+
+
+    elif query.data == "tele":
+        btn = [[
+            InlineKeyboardButton("⟸ Bᴀᴄᴋ", callback_data="help"),
+            InlineKeyboardButton("Cᴏɴᴛᴀᴄᴛ", url="telegram.me/axa_bachha")
+        ]]
+        await client.edit_message_media(
+            query.message.chat.id, 
+            query.message.id, 
+            InputMediaPhoto(random.choice(PICS))
+        )
+        reply_markup = InlineKeyboardMarkup(btn)
+        await query.message.edit_text(
+            text=(TELE_TXT),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+
 
 # Additional Callback Queries
 CALLBACK_TEXTS = {
@@ -127,3 +157,19 @@ async def callback_text_handler(client: Client, query: CallbackQuery):
         ]),
         disable_web_page_preview=True
     )
+
+
+    TELE_TXT = """<b>ʜᴇʟᴘ: ᴛᴇʟᴇɢʀᴀᴘʜ ᴅᴏ ᴀꜱ ʏᴏᴜ ᴡɪꜱʜ ᴡɪᴛʜ ᴛᴇʟᴇɢʀᴀ.ᴘʜ ᴍᴏᴅᴜʟᴇ! 
+  
+ ᴜꜱᴀɢᴇ: /telegraph - ꜱᴇɴᴅ ᴍᴇ ᴘɪᴄᴛᴜʀᴇ ᴏʀ ᴠɪᴅᴇ ᴜɴᴅᴇʀ (5ᴍʙ) 
+  
+ ɴᴏᴛᴇ: 
+ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ɪꜱ ᴀᴠᴀɪʟᴀʙʟᴇ ɪɴ ɢᴏᴜᴘꜱ ᴀɴᴅ ᴘᴍꜱ 
+ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ʙᴇ ᴜꜱᴇᴅ ʙʏ ᴇᴠᴇʀʏᴏɴᴇ</b>""" 
+
+    STICKER_TXT = """<b>yᴏᴜ ᴄᴀɴ ᴜꜱᴇ ᴛʜɪꜱ ᴍᴏᴅᴜʟᴇ ᴛᴏ ꜰɪɴᴅ ᴀɴy  ꜱᴛɪᴄᴋᴇʀꜱ ɪᴅ. 
+ • ᴜꜱᴀɢᴇ :ᴛᴏ ɢᴇᴛ ꜱᴛɪᴄᴋᴇʀ 
+   
+ ⭕ ʜᴏᴡ ᴛᴏ ᴜꜱᴇ 
+ /stickerid
+ </b>""" 
