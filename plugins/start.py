@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
-    except 
+    except:
         pass     
     user = message.from_user
     if not await db.is_user_exist(user.id):
