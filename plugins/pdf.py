@@ -327,6 +327,6 @@ async def handle_filename(client: Client, message: Message):
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
                     document=output_file,
-                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot
-
+                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot**)"
+                )
                     
