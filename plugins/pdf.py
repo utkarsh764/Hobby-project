@@ -104,6 +104,7 @@ async def handle_image_metadata(client: Client, message: Message):
         "Send more files or use /done ✅ to merge them."
     )
 
+
 @Client.on_message(filters.command(["done"]))
 async def merge_files(client: Client, message: Message):
     user_id = message.from_user.id
@@ -155,25 +156,26 @@ async def handle_filename(client: Client, message: Message):
         thumbnail_path = None  # No thumbnail provided
 
     # Proceed to merge the files
-    progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... 🔄**")
+    progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... ⏰**")
 
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
             output_file = os.path.join(temp_dir, f"{filename_without_thumbnail}.pdf")
             merger = PdfMerger()
 
+            total_files = len(user_file_metadata[user_id])
             for index, file_data in enumerate(user_file_metadata[user_id], start=1):
                 if file_data["type"] == "pdf":
                     file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                     merger.append(file_path)
-                    await progress_message.edit_text(f"**📑 Merging PDFs {index} of {len(user_file_metadata[user_id])}...**")
+                    await show_progress_bar(progress_message, index, total_files)  # Update progress bar
                 elif file_data["type"] == "image":
                     img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                     image = Image.open(img_path).convert("RGB")
                     img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                     image.save(img_pdf_path, "PDF")
                     merger.append(img_pdf_path)
-                    await progress_message.edit_text(f"**📸 Merging image {index} of {len(user_file_metadata[user_id])}...**")
+                    await show_progress_bar(progress_message, index, total_files)  # Update progress bar
 
             merger.write(output_file)
             merger.close()
@@ -218,5 +220,4 @@ async def handle_filename(client: Client, message: Message):
         # Reset the user's state
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
-
 
