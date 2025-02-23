@@ -5,32 +5,47 @@ from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
 
-# Start Command
+import logging
+import random
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
+# Start command handler
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
+    logging.info(f"Received /start command from {message.from_user.id}")
+    
+    # Try to react to the message with a random emoji
     try:
-        await message.react(emoji=random.choice(REACTIONS), big=True)
-    except:
-        pass    
+        await client.send_reaction(chat_id=message.chat.id, message_id=message.id, emoji=random.choice(REACTIONS))
+    except Exception as e:
+        logging.error(f"Error reacting to message: {e}")
+    
+    # Add user to the database if they don't exist
     user = message.from_user
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
     
+    # Welcome message text
     txt = (
         f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
         f"**🔘 Usᴇ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**"
     )
     
+    # Inline keyboard buttons
     button = InlineKeyboardMarkup([
         [InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url='https://t.me/axa_bachha')],
         [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'),
          InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
-    ])    
+    ])
+    
+    # Send the welcome message with a photo or text
     if START_PIC:
         await message.reply_photo(START_PIC, caption=txt, reply_markup=button)
     else:
-        await message.reply_text(text=txt, reply_markup=button, disable_web_page_preview=True) 
+        await message.reply_text(text=txt, reply_markup=button, disable_web_page_preview=True)
 
 # Logs Command
 @Client.on_message(filters.command('logs') & filters.user(ADMIN))
