@@ -327,6 +327,36 @@ async def handle_filename(client: Client, message: Message):
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
                     document=output_file,
-                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot**)"
+                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot**)",
                 )
-                    
+
+            await progress_message.delete()
+
+            # Send a sticker after sending the merged PDF
+            await client.send_sticker(
+                chat_id=message.chat.id,
+                sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
+            )
+
+    except Exception as e:
+        await progress_message.edit_text(f"❌ Failed to merge files: {e}")
+
+    finally:
+        # Clean up
+        user_merge_state.pop(user_id, None)
+        user_file_metadata.pop(user_id, None)
+        pending_filename_requests.pop(user_id, None)
+
+#————————————————————————————————————————————————————————————————————————————————————————————
+# Cancel Command
+@Client.on_message(filters.command(["stop"]))
+async def cancel_merge(client: Client, message: Message):
+    user_id = message.from_user.id
+    if user_id in user_merge_state:
+        user_merge_state.pop(user_id)
+        user_file_metadata.pop(user_id, None)
+        pending_filename_requests.pop(user_id, None)
+        await message.reply_text("✅ Merge process cancelled.")
+    else:
+        await message.reply_text("⚠️ No active merge process to cancel.")
+
