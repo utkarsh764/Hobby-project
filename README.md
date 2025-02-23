@@ -10,19 +10,12 @@
 ### ⚡️ Configs 
 
 * `BOT_TOKEN`  - Get bot token from @BotFather
-
 * `API_ID` - Get api id From my.telegram.org 
-
 * `API_HASH` - From my.telegram.org 
-
 * `ADMIN` - AUTH or bot controllers id's multiple id use space to split 
-
 * `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
-
 * `DB_NAME`  - Your database name from mongoDB. Default will be 'my'
-
 * `FORCE_SUB` - your force sub channel username without @ 
-
 * `START_PIC` - start message photo
 
 
@@ -36,17 +29,6 @@
 </a>
 </p>
 </details>
-
-<details><summary>Deploy To Heroku</summary>
-<p>
-<br>
-<a href="https://heroku.com/deploy?template=https://github.com/LazyDeveloperr/Gangster-Baby-Renamer-BOT">
-  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
-</a>
-</p>
-</details>
-
-
 
 
 
@@ -63,17 +45,16 @@
  - Developer Service 24x7. 🔥
 
 ### 🚦 Commands
-`/start` - Check if the bot is running.
-
-`/viewthumb` - To view current thumbnail.
-
-`/delthumb` - To delete current thumbnail.
-
-`/set_caption` - set a custom caption.
-
-`/see_caption` - see your custom caption.
-
-`/del_caption` - delete custom caption.
+start - start
+cancel - cancel batch
+merge - start merge process 
+done - merge PDFs 
+stop - stop merging
+telegraph - telegraph link 
+stickerid - sticker id
+accept - accept preding requests
+users - Check total users in DB
+broadcast - Send message to users
 
 `/users` - To view list of users, using BOT [FOR ADMINS USE ONLY]
 
@@ -87,8 +68,8 @@
 - [❣️ Join Youtube](https://www.youtube.com/channel/UCY-iDra0x2hdd9PdHKcZkRw)
 
 
-#### 🧡 Respecting... 🧡
-- [🔥 LazyDeveloperr](https://github.com/LazyDeveloperr) 
+#### 🧡 Credits... 🧡
+- [🔥 AMIT SINGH](https://github.com/Ur_Amit_01) 
 - [🔥 Pyrogram](https://github.com/pyrogram/pyrogram)
 
 
