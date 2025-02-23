@@ -228,6 +228,7 @@ async def handle_image_metadata(client: Client, message: Message):
 
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Merge Files
+
 @Client.on_message(filters.command(["done"]))
 async def merge_files(client: Client, message: Message):
     user_id = message.from_user.id
@@ -238,7 +239,13 @@ async def merge_files(client: Client, message: Message):
 
     await message.reply_text("✍️ Type a name for your merged PDF 📄.")
     pending_filename_requests[user_id] = {"filename_request": True}
-
+    
+    finally:
+        # Reset all states
+        user_merge_state.pop(user_id, None)
+        user_file_metadata.pop(user_id, None)
+        pending_filename_requests.pop(user_id, None)
+        
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Handle Filename Input
 @Client.on_message(filters.text & filters.private & ~filters.regex("https://t.me/"))
