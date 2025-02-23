@@ -46,9 +46,7 @@
 
 ### 🚦 Commands
 `start` - start
-
-
-`cancel` - cancel batch.
+`cancel` - cancel batch
 `merge` - start merge process.
 `done` - merge PDFs .
 `stop` - stop merging.
