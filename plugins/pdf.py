@@ -51,12 +51,31 @@ async def invert_pdf_colors(input_pdf_path: str, output_pdf_path: str) -> None:
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
         pix = page.get_pixmap()
+        
+        # Convert the pixmap to a PIL Image
         img = Image.open(io.BytesIO(pix.tobytes()))
+        
+        # Invert the colors of the image
         inverted_img = ImageOps.invert(img.convert("RGB"))
-        inverted_pix = fitz.Pixmap(fitz.csRGB, inverted_img.tobytes(), inverted_img.size[0], inverted_img.size[1])
+        
+        # Convert the inverted image back to bytes
+        inverted_img_bytes = inverted_img.tobytes()
+        
+        # Create a new pixmap from the inverted image
+        inverted_pix = fitz.Pixmap(
+            fitz.csRGB,  # Colorspace
+            pix.width,   # Width
+            pix.height,  # Height
+            inverted_img_bytes,  # Image data
+        )
+        
+        # Create a new PDF page with the same dimensions as the original
         new_page = new_pdf.new_page(width=page.rect.width, height=page.rect.height)
+        
+        # Insert the inverted image into the new page
         new_page.insert_image(new_page.rect, pixmap=inverted_pix)
     
+    # Save the new PDF with inverted colors
     new_pdf.save(output_pdf_path)
     new_pdf.close()
     pdf_document.close()
@@ -308,36 +327,6 @@ async def handle_filename(client: Client, message: Message):
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
                     document=output_file,
-                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot**)",
-                )
+                    caption=f"📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n**@z900_Robot
 
-            await progress_message.delete()
-
-            # Send a sticker after sending the merged PDF
-            await client.send_sticker(
-                chat_id=message.chat.id,
-                sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
-            )
-
-    except Exception as e:
-        await progress_message.edit_text(f"❌ Failed to merge files: {e}")
-
-    finally:
-        # Clean up
-        user_merge_state.pop(user_id, None)
-        user_file_metadata.pop(user_id, None)
-        pending_filename_requests.pop(user_id, None)
-
-#————————————————————————————————————————————————————————————————————————————————————————————
-# Cancel Command
-@Client.on_message(filters.command(["stop"]))
-async def cancel_merge(client: Client, message: Message):
-    user_id = message.from_user.id
-    if user_id in user_merge_state:
-        user_merge_state.pop(user_id)
-        user_file_metadata.pop(user_id, None)
-        pending_filename_requests.pop(user_id, None)
-        await message.reply_text("✅ Merge process cancelled.")
-    else:
-        await message.reply_text("⚠️ No active merge process to cancel.")
-
+                    
