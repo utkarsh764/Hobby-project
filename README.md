@@ -12,11 +12,11 @@
 - `BOT_TOKEN`  - Get bot token from @BotFather
 - `API_ID` - Get api id From my.telegram.org 
 - `API_HASH` - From my.telegram.org 
-* `ADMIN` - AUTH or bot controllers id's multiple id use space to split 
-* `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
-* `DB_NAME`  - Your database name from mongoDB. Default will be 'my'
-* `FORCE_SUB` - your force sub channel username without @ 
-* `START_PIC` - start message photo
+- `ADMIN` - AUTH or bot controllers id's multiple id use space to split 
+- `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
+- `DB_NAME`  - Your database name from mongoDB. Default will be 'my'
+- `FORCE_SUB` - your force sub channel username without @ 
+- `START_PIC` - start message photo
 
 
   ### 📶 DEPLOYEMENT SUPPORT
@@ -45,16 +45,16 @@
  - Developer Service 24x7. 🔥
 
 ### 🚦 Commands
-start - start
-cancel - cancel batch
-merge - start merge process 
-done - merge PDFs 
-stop - stop merging
-telegraph - telegraph link 
-stickerid - sticker id
-accept - accept preding requests
-users - Check total users in DB
-broadcast - Send message to users
+`start` - start
+`cancel` - cancel batch
+`merge` - start merge process 
+`done` - merge PDFs 
+`stop` - stop merging
+`telegraph` - telegraph link 
+`stickerid` - sticker id
+`accept` - accept preding requests
+`users` - Check total users in DB
+`broadcast` - Send message to users
 
 `/users` - To view list of users, using BOT [FOR ADMINS USE ONLY]
 
