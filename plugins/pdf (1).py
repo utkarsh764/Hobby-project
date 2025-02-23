@@ -17,22 +17,29 @@ user_merge_state = {}  # Track if a user is in the merge process
 user_file_metadata = {}  # Store metadata for each user's files
 pending_filename_requests = {}  # Track pending filename requests
 
+# Ensure the downloads directory exists
+os.makedirs("downloads", exist_ok=True)
+
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Progress Bar Function
-async def show_progress_bar(progress_message, current, total, bar_length=10):
+async def show_progress_bar(progress_message, current, total, task="Processing", bar_length=10):
     """
     Display a text-based progress bar.
     :param progress_message: The message object to edit.
-    :param current: Current progress (e.g., files processed so far).
-    :param total: Total number of items to process.
+    :param current: Current progress (e.g., bytes downloaded/merged/uploaded).
+    :param total: Total size of the task.
+    :param task: Current task (e.g., "Downloading", "Merging", "Uploading").
     :param bar_length: Length of the progress bar in characters.
     """
-    progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
-    filled_length = int(bar_length * progress)
-    bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
-    percentage = int(progress * 100)
-    text = f"**🛠️ Merging files...**\n`[{bar}]` {percentage}% ({current}/{total})"
-    await progress_message.edit_text(text)
+    try:
+        progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
+        filled_length = int(bar_length * progress)
+        bar = "█" * filled_length + "░" * (bar_length - filled_length)  # Filled and empty parts
+        percentage = int(progress * 100)
+        text = f"**🛠️ {task}...**\n`[{bar}]` {percentage}% ({current}/{total})"
+        await progress_message.edit_text(text)
+    except Exception as e:
+        logger.error(f"Error in progress_message: {e}")
 
 #————————————————————————————————————————————————————————————————————————————————————————————
 # Start File Collection
@@ -163,7 +170,7 @@ async def handle_filename(client: Client, message: Message):
         thumbnail_path = None  # No thumbnail provided
 
     # Proceed to merge the files
-    progress_message = await message.reply_text("🛠️ Merging your files... Please wait... 🔄")
+    progress_message = await message.reply_text("🛠️ Starting the merge process... Please wait... 🔄")
 
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -173,27 +180,46 @@ async def handle_filename(client: Client, message: Message):
             total_files = len(user_file_metadata[user_id])
             for index, file_data in enumerate(user_file_metadata[user_id], start=1):
                 if file_data["type"] == "pdf":
-                    file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
+                    # Download the file
+                    file_path = await client.download_media(
+                        file_data["file_id"],
+                        file_name=os.path.join(temp_dir, file_data["file_name"]),
+                        progress=lambda current, total: asyncio.create_task(
+                            show_progress_bar(progress_message, current, total, task="Downloading")
+                        ),
+                    )
                     merger.append(file_path)
-                    await show_progress_bar(progress_message, index, total_files)  # Update progress bar
+                    await show_progress_bar(progress_message, index, total_files, task="Merging")
                 elif file_data["type"] == "image":
-                    img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
+                    # Download the image
+                    img_path = await client.download_media(
+                        file_data["file_id"],
+                        file_name=os.path.join(temp_dir, file_data["file_name"]),
+                        progress=lambda current, total: asyncio.create_task(
+                            show_progress_bar(progress_message, current, total, task="Downloading")
+                        ),
+                    )
                     image = Image.open(img_path).convert("RGB")
                     img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                     image.save(img_pdf_path, "PDF")
                     merger.append(img_pdf_path)
-                    await show_progress_bar(progress_message, index, total_files)  # Update progress bar
+                    await show_progress_bar(progress_message, index, total_files, task="Merging")
 
+            # Write the merged PDF
             merger.write(output_file)
             merger.close()
 
-            # Send the merged file with or without the thumbnail
+            # Upload the merged file
+            await show_progress_bar(progress_message, 0, 1, task="Uploading")
             if thumbnail_path:
                 await client.send_document(
                     chat_id=message.chat.id,
                     document=output_file,
                     thumb=thumbnail_path,  # Set the thumbnail
                     caption="🎉 Here is your merged PDF 📄.",
+                    progress=lambda current, total: asyncio.create_task(
+                        show_progress_bar(progress_message, current, total, task="Uploading")
+                    ),
                 )
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
@@ -205,6 +231,9 @@ async def handle_filename(client: Client, message: Message):
                     chat_id=message.chat.id,
                     document=output_file,
                     caption="🎉 Here is your merged PDF 📄.",
+                    progress=lambda current, total: asyncio.create_task(
+                        show_progress_bar(progress_message, current, total, task="Uploading")
+                    ),
                 )
                 await client.send_document(
                     chat_id=LOG_CHANNEL,
@@ -230,15 +259,15 @@ async def handle_filename(client: Client, message: Message):
         pending_filename_requests.pop(user_id, None)
 
 #————————————————————————————————————————————————————————————————————————————————————————————
-# Cancel Command
+# Stop Command
 @Client.on_message(filters.command(["stop"]))
-async def cancel_merge(client: Client, message: Message):
+async def stop_merge(client: Client, message: Message):
     user_id = message.from_user.id
     if user_id in user_merge_state:
         user_merge_state.pop(user_id)
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
-        await message.reply_text("✅ Merge process cancelled.")
+        await message.reply_text("**✅ Merge process stopped.**")
     else:
-        await message.reply_text("⚠️ No active merge process to cancel.")
+        await message.reply_text("**⚠️ No active merge process to stop.**")
 
