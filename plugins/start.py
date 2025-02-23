@@ -12,14 +12,14 @@ async def start(client, message):
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
     
-    txt = (f"**👋 Hello {user.mention}**\n\n"
-           "I am an advanced file Renamer and Converter BOT with permanent and custom thumbnail support.\n\n"
-           "Send me any video or document!")
+    txt=f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
+    f"**🔋 ɪ ᴀᴍ ᴀ ᴘᴏᴡᴇʀꜰᴜʟ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
+    f"**🔘 Usᴇ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**"
     
     button = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🤖 Developer", url='https://t.me/axa_bachha')],
-        [InlineKeyboardButton('⚡️ About', callback_data='about'),
-         InlineKeyboardButton('🤕 Help', callback_data='help')]
+        [InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url='https://t.me/axa_bachha')],
+        [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'),
+         InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
     ])
     
     if START_PIC:
