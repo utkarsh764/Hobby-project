@@ -1,13 +1,17 @@
 from asyncio import sleep
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from config import START_PIC, ADMIN
+from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
 
 # Start Command
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
+    try:
+        await message.react(emoji=random.choice(REACTIONS), big=True)
+    except:
+        pass    
     user = message.from_user
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
