@@ -10,20 +10,20 @@ class mr(object):
 ╰━━━━━━━━━━━━━━━➣ """
 
     ABOUT_TXT = """
+<b>
 ╭───────────⍟
 ├🤖 The Name is : {}
-├👑 ADMIN-TG : <a href=https://t.me/LazyDeveloper>LazyDeveloper</a> 
-├👑 Instagram : <a href=https://www.instagram.com/LazyDeveloperrr>C-Insta</a> 
+├👑 OWNER : <a href=https://t.me/axa_bachha>𝐻𝑜𝑚𝑜 𝑠𝑎𝑝𝑖𝑒𝑛『❅』</a> 
 ├📕 LIBRARY : <a href=https://github.com/pyrogram>Pyrogram</a>
 ├✏️ LANGUAGE : <a href=https://www.python.org>Python 3</a>
 ├💾 DATABASE : <a href=https://cloud.mongodb.com>MongoDB</a>
 ├🌀 𝙼𝚈 𝚂𝙴𝚁𝚅𝙴𝚁1 : <a href=https://apps.koyeb.com>Koyeb</a>
-├🌀 𝙼𝚈 𝚂𝙴𝚁𝚅𝙴𝚁2 : <a href=https://dashboard.heroku.com>Heroku</a>
 ├📊 BUILD-STATUS : Python v3.6.8               
 ╰───────────────⍟
+</b>
                                 """
     HELP_TXT = """
-🌌 <b><u>My Modules 👇🏻</u></b>
+🌌 <b><u>My Functions 👇🏻</u></b>
  
 """
 
