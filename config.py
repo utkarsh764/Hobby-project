@@ -9,10 +9,8 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
 FORCE_SUB = os.environ.get("FORCE_SUB", "") 
 
-DB_NAME = os.environ.get("DB_NAME","")     
+DB_NAME = os.environ.get("DB_NAME","Rename")     
 DB_URL = os.environ.get("DB_URL","")
- 
-FLOOD = int(os.environ.get("FLOOD", "10"))
 
 START_PIC = os.environ.get("START_PIC", "https://graph.org/file/ad48ac09b1e6f30d2dae4.jpg")
 
