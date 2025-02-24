@@ -5,62 +5,7 @@ from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
 import random
-
-FORCE_SUB_CHANNEL = "bot_updatess"
-
-async def is_subscribed(user_id: int):
-    try:
-        status = await client.get_chat_member(FORCE_SUB_CHANNEL, user_id)
-        return status.status in ["member", "administrator", "creator"]
-    except Exception:
-        return False
-
-async def create_invite_link():
-    try:
-        # Check if the channel is public
-        chat = await client.get_chat(FORCE_SUB_CHANNEL)
-        if chat.username:
-            return f"https://t.me/{chat.username}"
-        else:
-            # For private channels, generate an invite link
-            invite_link = await client.create_chat_invite_link(FORCE_SUB_CHANNEL, member_limit=1)
-            return invite_link.invite_link
-    except Exception as e:
-        print(f"Error creating invite link: {e}")
-        return None
-
-@Client.on_message(filters.private & filters.command("start"))
-async def force_subscribe(client: Client, message: Message):
-    user_id = message.from_user.id
-    if not await is_subscribed(user_id):
-        invite_link = await create_invite_link()
-        if not invite_link:
-            await message.reply_text("**❌ Error: Unable to generate invite link. Please contact the admin.**")
-            return
-
-        buttons = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Join Channel 🔔", url=invite_link)],
-            [InlineKeyboardButton("Try Again 🔄", callback_data="check_subscription")]
-        ])
-        await message.reply_text(
-            "**⚠️ You must join our channel to use this bot.**\n\n"
-            "Please join the channel below and click **Try Again**.",
-            reply_markup=buttons
-        )
-        return
-
-    await start(client, message)
-
-@Client.on_callback_query(filters.regex("check_subscription"))
-async def check_subscription_callback(client: Client, query: CallbackQuery):
-    user_id = query.from_user.id
-    if await is_subscribed(user_id):
-        await query.message.delete()
-        await start(client, query.message)
-    else:
-        await query.answer("❌ You haven't joined the channel yet. Please join first!", show_alert=True)
-
-    
+   
 # Original Start Command 
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
