@@ -1,12 +1,66 @@
 from asyncio import sleep
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, Message
 from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
 import random
 
-# Start command handler
+# Replace with your channel username or ID
+FORCE_SUB_CHANNEL = "your_channel_username"  # Example: "my_channel"
+
+# Function to check if a user is subscribed to the channel
+async def is_subscribed(user_id: int):
+    try:
+        # Replace `client` with your bot's client instance
+        status = await client.get_chat_member(FORCE_SUB_CHANNEL, user_id)
+        if status.status in ["member", "administrator", "creator"]:
+            return True
+        return False
+    except Exception as e:
+        print(f"Error checking subscription: {e}")
+        return False
+
+# Force Subscribe Handler
+@Client.on_message(filters.private & filters.command("start"))
+async def force_subscribe(client: Client, message: Message):
+    user_id = message.from_user.id
+    if not await is_subscribed(user_id):
+        buttons = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Join Channel 🔔", url=f"https://t.me/{FORCE_SUB_CHANNEL}")],
+            [InlineKeyboardButton("Try Again 🔄", callback_data="check_subscription")]
+        ])
+        await message.reply_text(
+            "**⚠️ You must join our channel to use this bot.**\n\n"
+            "Please join the channel below and click **Try Again**.",
+            reply_markup=buttons
+        )
+        return
+    await start(client, message)
+
+# Callback Query Handler for Subscription Check
+@Client.on_callback_query(filters.regex("check_subscription"))
+async def check_subscription_callback(client: Client, query: CallbackQuery):
+    user_id = query.from_user.id
+
+    # Check if the user is subscribed
+    if await is_subscribed(user_id):
+        # If subscribed, proceed with the start command
+        await query.message.delete()
+        await start(client, query.message)
+    else:
+        # If not subscribed, prompt again
+        buttons = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Join Channel 🔔", url=f"https://t.me/{FORCE_SUB_CHANNEL}")],
+            [InlineKeyboardButton("Try Again 🔄", callback_data="check_subscription")]
+        ])
+        await query.message.edit_text(
+            "**⚠️ You must join our channel to use this bot.**\n\n"
+            "Please join the channel below and click **Try Again**.",
+            reply_markup=buttons
+        )
+
+# Original Start Command 
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
     try:
