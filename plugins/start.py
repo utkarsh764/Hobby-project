@@ -38,7 +38,7 @@ async def start(client, message):
 @Client.on_message(filters.command('logs') & filters.user(ADMIN))
 async def log_file(client, message):
     try:
-        await message.reply_document('TelegramBot.txt')
+        await message.reply_document('TelegramBot.log')
     except Exception as e:
         await message.reply_text(f"Error:\n`{e}`")
 
