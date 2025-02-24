@@ -7,7 +7,7 @@
 <p align="center">🤍 Thanks for Being Here 🤍</p>
 
 ### To-Dos
-[×] merging
+- [×] merging
 []
 ### ⚡️ Configs 
 - `BOT_TOKEN`  - Get bot token from @BotFather
