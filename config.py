@@ -9,6 +9,9 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
 FORCE_SUB = os.environ.get("FORCE_SUB", "") 
 
+AUTH_CHANNELS = environ.get("AUTH_CHANNEL", "-1002448030573") #example ("-100******, -100********")
+AUTH_CHANNELS = [int(channel_id) for channel_id in AUTH_CHANNELS.split(",")]
+
 DB_NAME = os.environ.get("DB_NAME","Rename")     
 DB_URL = os.environ.get("DB_URL","")
 
