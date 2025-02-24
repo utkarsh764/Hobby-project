@@ -13,7 +13,7 @@
 - [x] Restricted content saver 
 - [x] Accept pending join requests
 - [x] react on start message
-- [ ] Update help and about
+- [ ] Update about
 - [ ] Force subscribe
 - [ ] improve force sub interface 
 - [ ] /set command ,to set commands for bot
