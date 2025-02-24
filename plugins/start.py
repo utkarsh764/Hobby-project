@@ -17,9 +17,16 @@ async def is_subscribed(user_id: int):
 
 async def create_invite_link():
     try:
-        invite_link = await client.create_chat_invite_link(FORCE_SUB_CHANNEL, member_limit=1)
-        return invite_link.invite_link
-    except Exception:
+        # Check if the bot is an admin in the channel
+        chat = await client.get_chat(FORCE_SUB_CHANNEL)
+        if chat.type in ["channel", "supergroup"]:
+            invite_link = await client.create_chat_invite_link(FORCE_SUB_CHANNEL, member_limit=1)
+            return invite_link.invite_link
+        else:
+            print("Error: The provided FORCE_SUB_CHANNEL is not a valid channel or supergroup.")
+            return None
+    except Exception as e:
+        print(f"Error creating invite link: {e}")
         return None
 
 @Client.on_message(filters.private & filters.command("start"))
