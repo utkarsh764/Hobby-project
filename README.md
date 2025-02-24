@@ -13,10 +13,12 @@
 - [x] Restricted content saver 
 - [x] Accept pending join requests
 - [x] react on start message
-- [x] update help and about
+- [ ] Update help and about
 - [ ] Force subscribe
-- [ ] Invert PDFs
-- [ ] Renaming 
+- [ ] improve force sub interface 
+- [ ] /set command ,to set commands for bot
+- [ ] Invert PDFs (exam baad)
+- [ ] Renaming (exam baad)
 
 ### ⚡️ Configs 
 * `BOT_TOKEN`  - Get bot token from @BotFather
