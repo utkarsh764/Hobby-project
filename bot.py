@@ -71,8 +71,8 @@ class Bot(Client):
     async def is_not_subscribed(self, message):
         join_message = "**𝚂𝙾𝚁𝚁𝚈 𝙳𝚄𝙳𝙴 𝚈𝙾𝚄've 𝙽𝙾𝚃 𝙹𝙾𝙸𝙽𝙳 𝙼𝚈 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 😔. 𝙿𝙻𝙴𝙰𝚂𝙴 𝙹𝙾𝙸𝙽 𝙼𝚈 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 𝚃𝙾 𝚄𝚂𝙴 𝚃𝙷𝙸𝚂 𝙱𝙾𝚃. 🙏 **"        
         buttons = [
-            [InlineKeyboardButton(text=📢 𝙹𝚘𝚒𝚗 𝙼𝚢 𝚄𝚙𝚍𝚊𝚝𝚎 𝙲𝚑𝚊𝚗𝚗𝚎𝚕 📢, url=self.invitelink)],
-            [InlineKeyboardButton(text=🔄 Check Again 🔄, callback_data="check_subscription")]
+            [InlineKeyboardButton("📢 𝙹𝚘𝚒𝚗 𝙼𝚢 𝚄𝚙𝚍𝚊𝚝𝚎 𝙲𝚑𝚊𝚗𝚗𝚎𝚕 📢", url="self.invitelink")],
+            [InlineKeyboardButton("🔄 Check Again 🔄", callback_data="check_subscription")]
         ]        
         await message.reply_text(
             text=join_message,
@@ -93,8 +93,8 @@ class Bot(Client):
             pass 
         join_message = "**𝚂𝙾𝚁𝚁𝚈 𝙳𝚄𝙳𝙴 𝚈𝙾𝚄've 𝙽𝙾𝚃 𝙹𝙾𝙸𝙽𝙳 𝙼𝚈 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 😔. 𝙿𝙻𝙴𝙰𝚂𝙴 𝙹𝙾𝙸𝙽 𝙼𝚈 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 𝚃𝙾 𝚄𝚂𝙴 𝚃𝙷𝙸𝚂 𝙱𝙾𝚃. 🙏 **"        
         buttons = [
-            [InlineKeyboardButton(text=📢 𝙹𝚘𝚒𝚗 𝙼𝚢 𝚄𝚙𝚍𝚊𝚝𝚎 𝙲𝚑𝚊𝚗𝚗𝚎𝚕 📢, url=self.invitelink)],
-            [InlineKeyboardButton(text=🔄 Check Again 🔄, callback_data="check_subscription")]
+            [InlineKeyboardButton("📢 𝙹𝚘𝚒𝚗 𝙼𝚢 𝚄𝚙𝚍𝚊𝚝𝚎 𝙲𝚑𝚊𝚗𝚗𝚎𝚕 📢", url="self.invitelink")],
+            [InlineKeyboardButton("🔄 Check Again 🔄", callback_data="check_subscription")]
         ]        
         await callback_query.message.edit_text(
             text=join_message,
