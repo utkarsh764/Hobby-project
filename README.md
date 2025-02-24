@@ -8,24 +8,26 @@
 
 ### To-Dos
 - [x] PDFs merging
+- [X] Image merging 
 - [x] stickerid + telegraph + id
 - [x] Restricted content saver 
-- [ ] Force subscribe
-- [x] Accept pending requests
+- [x] Accept pending join requests
 - [x] react on start message
 - [x] update help and about
-- [ ] 
+- [ ] Force subscribe
+- [ ] Invert PDFs
+- [ ] Renaming 
 
 ### ⚡️ Configs 
 * `BOT_TOKEN`  - Get bot token from @BotFather
 * `API_ID` - Get api id From my.telegram.org 
 * `API_HASH` - From my.telegram.org 
 * `ADMIN` - AUTH or bot controllers id's multiple id use space to split 
-- `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
-- `DB_NAME`  - Your database name from mongoDB. Default will be 'my'
-- `FORCE_SUB` - your force sub channel username without @ 
-- `START_PIC` - start message photo
-- `Port` - 8080
+* `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
+* `DB_NAME`  - Your database name from mongoDB. Default will be 'Z900'
+* `FORCE_SUB` - your force sub channel username without @ 
+* `START_PIC` - start message photo
+* `Port` - 8080
 
 
   ### 📶 DEPLOYEMENT SUPPORT
