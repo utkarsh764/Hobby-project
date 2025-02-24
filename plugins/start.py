@@ -6,7 +6,7 @@ from helper.txt import mr
 from helper.database import db
 import random
 
-FORCE_SUB_CHANNEL = "-1002448030573"
+FORCE_SUB_CHANNEL = "bot_updatess"
 
 async def is_subscribed(user_id: int):
     try:
@@ -17,14 +17,14 @@ async def is_subscribed(user_id: int):
 
 async def create_invite_link():
     try:
-        # Check if the bot is an admin in the channel
+        # Check if the channel is public
         chat = await client.get_chat(FORCE_SUB_CHANNEL)
-        if chat.type in ["channel", "supergroup"]:
+        if chat.username:
+            return f"https://t.me/{chat.username}"
+        else:
+            # For private channels, generate an invite link
             invite_link = await client.create_chat_invite_link(FORCE_SUB_CHANNEL, member_limit=1)
             return invite_link.invite_link
-        else:
-            print("Error: The provided FORCE_SUB_CHANNEL is not a valid channel or supergroup.")
-            return None
     except Exception as e:
         print(f"Error creating invite link: {e}")
         return None
