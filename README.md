@@ -13,9 +13,9 @@
 - [x] Restricted content saver 
 - [x] Accept pending join requests
 - [x] react on start message
-- [ ] Update about
-- [ ] Force subscribe
-- [ ] improve force sub interface 
+- [x] Update about
+- [x] Force subscribe
+- [x] improve force sub interface 
 - [ ] /set command ,to set commands for bot
 - [ ] Invert PDFs (exam baad)
 - [ ] Renaming (exam baad)
