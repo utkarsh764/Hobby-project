@@ -12,7 +12,7 @@ FORCE_SUB = os.environ.get("FORCE_SUB", "")
 AUTH_CHANNELS = environ.get("AUTH_CHANNEL", "-1002448030573") #example ("-100******, -100********")
 AUTH_CHANNELS = [int(channel_id) for channel_id in AUTH_CHANNELS.split(",")]
 
-DB_NAME = os.environ.get("DB_NAME","Rename")     
+DB_NAME = os.environ.get("DB_NAME","Z900")     
 DB_URL = os.environ.get("DB_URL","")
 
 START_PIC = os.environ.get("START_PIC", "https://graph.org/file/ad48ac09b1e6f30d2dae4.jpg")
