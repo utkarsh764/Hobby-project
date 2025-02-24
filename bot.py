@@ -99,6 +99,7 @@ class Bot(Client):
         await callback_query.message.edit_text(
             text=join_message,
             reply_markup=InlineKeyboardMarkup(buttons)
+        )
         
 bot = Bot()
 bot.run()
