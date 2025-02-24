@@ -6,7 +6,9 @@
 
 <p align="center">🤍 Thanks for Being Here 🤍</p>
 
-
+### To-Dos
+[x] merging
+[]
 ### ⚡️ Configs 
 - `BOT_TOKEN`  - Get bot token from @BotFather
 - `API_ID` - Get api id From my.telegram.org 
