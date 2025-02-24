@@ -1,36 +1,28 @@
-"""
-Apache License 2.0
-Copyright (c) 2022 @LazyDeveloper
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-Telegram Link : https://t.me/LazyDeveloper 
-Repo Link : https://github.com/LazyDeveloperr/Gangster-Baby-Renamer-BOT
-License Link : https://github.com/LazyDeveloperr/Gangster-Baby-Renamer-BOT/blob/main/LICENSE
-"""
-
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from helper.utils import not_subscribed 
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from helper.utils import not_subscribed
 
+# Handler for users who are not subscribed
 @Client.on_message(filters.private & filters.create(not_subscribed))
 async def is_not_subscribed(client, message):
-    buttons = [[ InlineKeyboardButton(text="📢𝙹𝚘𝚒𝚗 𝙼𝚢 𝚄𝚙𝚍𝚊𝚝𝚎 𝙲𝚑𝚊𝚗𝚗𝚎𝚕📢", url=client.invitelink) ]]
-    text = "**𝚂𝙾𝚁𝚁𝚈 𝙳𝚄𝙳𝙴 𝚈𝙾𝚄'VE 𝙽𝙾𝚃 𝙹𝙾𝙸𝙽𝙳 𝙼𝚈 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 😔. 𝙿𝙻𝙴𝙰𝚂𝙴 𝙹𝙾𝙸𝙽 𝙼𝚈 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 𝚃𝙾 𝚄𝚂𝙴 𝚃𝙷𝙸𝚂 𝙱𝙾𝚃 🙏 **"
+    buttons = [
+        [InlineKeyboardButton(text="📢 𝙹𝚘𝚒𝚗 𝙼𝚢 𝚞𝚙𝚍𝚊𝚝𝚎𝚜 𝙲𝚑𝚊𝚗𝚗𝚎𝚕 📢", url=client.invitelink)],
+        [InlineKeyboardButton(text="🔄 𝚃𝚛𝚢 𝙰𝚐𝚊𝚒𝚗", callback_data="check_subscription")]
+    ]
+    text = "𝐒𝐨𝐫𝐫𝐲 𝐝𝐮𝐝𝐞 𝐲𝐨𝐮❜𝐯𝐞 𝐧𝐨𝐭 𝐣𝐨𝐢𝐧𝐞𝐝 𝐦𝐲 𝐜𝐡𝐚𝐧𝐧𝐞𝐥 😞. 𝐏𝐥𝐞𝐚𝐬𝐞 𝐣𝐨𝐢𝐧 𝐚𝐧𝐝 𝐜𝐥𝐢𝐜𝐤 𝐨𝐧 𝐭𝐫𝐲 𝐚𝐠𝐚𝐢𝐧. 🔁"
     await message.reply_text(text=text, reply_markup=InlineKeyboardMarkup(buttons))
-          
 
+# Callback query handler for the "Try Again" button
+@Client.on_callback_query(filters.regex("check_subscription"))
+async def check_subscription(client, callback_query: CallbackQuery):
+    user_id = callback_query.from_user.id
 
+    # Check if the user is subscribed
+    if not_subscribed(user_id):  # Assuming not_subscribed can take user_id as an argument
+        # If not subscribed, show a popup message
+        await callback_query.answer("You are still not subscribed. Please join the channel and click Try again.🔄", show_alert=True)
+    else:
+        # If subscribed, trigger the start command
+        await client.send_message(user_id, "/start")
+        await callback_query.answer("Welcome back! You are now subscribed.", show_alert=True)
 
