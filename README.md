@@ -47,7 +47,7 @@
  - Has a custom Start-up pic.
  - Force subscribe available.
 
- -and many more 😴 
+ - And many more 😴 
 
 ### 🚦 Commands
 `start` - start
@@ -87,5 +87,5 @@
 
 ### 🤩 INSPIRATION
 <a href="#">
-   <p>❣️ PYRO 🔥</p>
+   <p>❣️ Lazy Dev 🔥</p>
 </a>
