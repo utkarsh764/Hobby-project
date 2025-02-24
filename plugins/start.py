@@ -90,6 +90,22 @@ async def log_file(client, message):
     except Exception as e:
         await message.reply_text(f"Error:\n`{e}`")
 
+# Set bot commands
+@Client.on_message(filters.command("set") & filters.user(ADMIN))
+async def set_commands(client: Client, message: Message):
+    await client.set_bot_commands([
+        BotCommand("start", "🤖 Start the bot"),
+        BotCommand("merge", "🛠 Start PDF merge"),
+        BotCommand("done", "📂 Merge PDFs"),
+        BotCommand("telegraph", "🌐 Get Telegraph link"),
+        BotCommand("stickerid", "🎭 Get sticker ID"),
+        BotCommand("accept", "✅ Accept pending join requests"),
+        BotCommand("users", "👥 Total users"),
+        BotCommand("broadcast", "📢 Send message")
+    ])
+    await message.reply_text("✅ Bot commands have been set.")
+
+
 # Callback Query Handler
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
