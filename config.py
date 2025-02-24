@@ -20,7 +20,7 @@ ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.envir
 PORT = os.environ.get("PORT", "8080")
 
 ERROR_MESSAGE = bool(os.environ.get('ERROR_MESSAGE', True))
-LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL_ID", "-1002027394591"))
+LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL_ID", ""))
 NEW_REQ_MODE = bool(environ.get('NEW_REQ_MODE', False))
 SESSION_STRING = os.environ.get("SESSION_STRING", "")
 REACTIONS = ["🤝", "😇", "🤗", "😍", "🎅", "🥰", "🤩", "😘", "😛", "😈", "🎉", "🫡", "😎", "🔥", "🤭", "🌚", "🆒", "👻", "😁"] #don't add any emoji because tg not support all emoji reactions
