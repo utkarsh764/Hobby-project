@@ -16,7 +16,7 @@ DB_NAME = os.environ.get("DB_NAME","Rename")
 DB_URL = os.environ.get("DB_URL","")
 
 START_PIC = os.environ.get("START_PIC", "https://graph.org/file/ad48ac09b1e6f30d2dae4.jpg")
-ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '').split()]
+ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '6803505727').split()]
 PORT = os.environ.get("PORT", "8080")
 
 ERROR_MESSAGE = bool(os.environ.get('ERROR_MESSAGE', True))
