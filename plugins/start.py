@@ -7,7 +7,7 @@ from helper.database import db
 import random
 
 # Replace with your channel username or ID
-FORCE_SUB_CHANNEL = "your_channel_username"  # Example: "my_channel"
+FORCE_SUB_CHANNEL = "-1002448030573"  # Example: "my_channel"
 
 # Function to check if a user is subscribed to the channel
 async def is_subscribed(user_id: int):
