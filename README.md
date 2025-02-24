@@ -41,18 +41,13 @@
 </p>
 
 
-
 #### 🥰 Features
- - Renames very fast .
- - Permanent Thumbnail support.
- - Force join for the user for use.
+ - PDF merging
  - Supports Broadcasts.
- - Set custom caption.
  - Has a custom Start-up pic.
  - Force subscribe available.
- - Supports ulimited renaming at a time.
- - Deploy to Koyeb + Heroku + Railway.
- - Developer Service 24x7. 🔥
+
+ -and many more 😴 
 
 ### 🚦 Commands
 `start` - start
