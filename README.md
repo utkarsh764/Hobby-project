@@ -30,16 +30,15 @@
 * `Port` - 8080
 
 
-  ### 📶 DEPLOYEMENT SUPPORT
+### 📶 DEPLOYEMENT SUPPORT
 
-<details><summary>🔥 Deploy To Koyeb 🔥</summary>
+<summary>🔥 Deploy To Koyeb 🔥</summary>
 <p>
 <br>                 
 <a target="/blank" href="https://app.koyeb.com/deploy?type=git&repository=github.com/LazyDeveloperr/Gangster-Baby-Renamer-BOT&branch=main&name=lazy-gangster-baby" >
   <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy">
 </a>
 </p>
-</details>
 
 
 
