@@ -1,9 +1,8 @@
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.types import Message
-from bot import Bot  # Import the Bot class from the main bot file
 
-@Bot.on_message(filters.command("id"))
-async def id_command(client: Bot, message: Message):
+@Client.on_message(filters.command("id"))
+async def id_command(client: Client, message: Message):
     """
     Handler for the /id command.
     Sends the chat ID of the current chat or user.
