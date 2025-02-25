@@ -223,11 +223,15 @@ async def start_file_collection(client: Client, message: Message):
 
 @Client.on_message(filters.document & filters.private)
 async def handle_pdf_metadata(client: Client, message: Message):
-    await merge_plugin.handle_pdf_metadata(client, message)
+    user_id = message.from_user.id
+    if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "collecting_files":
+        await merge_plugin.handle_pdf_metadata(client, message)
 
 @Client.on_message(filters.photo & filters.private)
 async def handle_image_metadata(client: Client, message: Message):
-    await merge_plugin.handle_image_metadata(client, message)
+    user_id = message.from_user.id
+    if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "collecting_files":
+        await merge_plugin.handle_image_metadata(client, message)
 
 @Client.on_message(filters.command(["done"]))
 async def merge_files(client: Client, message: Message):
@@ -235,6 +239,6 @@ async def merge_files(client: Client, message: Message):
 
 @Client.on_message(filters.text & filters.private)
 async def handle_filename(client: Client, message: Message):
-    await merge_plugin.handle_filename(client, message)
-
-
+    user_id = message.from_user.id
+    if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "waiting_for_filename":
+        await merge_plugin.handle_filename(client, message)
