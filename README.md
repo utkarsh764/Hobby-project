@@ -16,7 +16,7 @@
 - [x] Update about
 - [x] Force subscribe
 - [x] improve force sub interface 
-- [ ] /set command ,to set commands for bot
+- [X] /set command ,to set commands for bot
 - [ ] Invert PDFs (exam baad)
 - [ ] Renaming (exam baad)
 
@@ -52,27 +52,17 @@
  - And many more 😴 
 
 ### 🚦 Commands
-`start` - start
-
-`cancel` - cancel batch
-
-`merge` - start merge process.
-
-`done` - merge PDFs .
-
-`telegraph` - telegraph link .
-
-`stickerid` - sticker id.
-
-`accept` - accept preding join requests.
-
-`users` - Check total users in DB.
-
-`broadcast` - Send message to users.
-
-`/users` - To view list of users, using BOT [FOR ADMINS USE ONLY]
-
-`/broadcast` - Message Broadcast command [FOR ADMINS USE ONLY].
+```
+start - 🤖 Start the bot
+merge - 🛠 Start PDF merge
+done - 📂 Merge PDFs
+telegraph - 🌐 Get Telegraph link
+stickerid - 🛻 Get sticker ID
+accept - ✅ Accept pending join requests
+cancel - 🚫 Stop batch processing 
+users - 👥 Total users
+broadcast - 📩 Send message
+```
 
 
 ### 🔗 important_Links
