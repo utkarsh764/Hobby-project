@@ -16,7 +16,7 @@ START_PIC = os.environ.get("START_PIC", "https://graph.org/file/ad48ac09b1e6f30d
 ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '6803505727').split()]
 PORT = os.environ.get("PORT", "8080")
 
-ERROR_MESSAGE = bool(os.environ.get('ERROR_MESSAGE', True))
+ERROR_MESSAGE = bool(os.environ.get('ERROR_MESSAGE', False))
 LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1002027394591"))
 NEW_REQ_MODE = bool(environ.get('NEW_REQ_MODE', False))
 SESSION_STRING = os.environ.get("SESSION_STRING", "")
