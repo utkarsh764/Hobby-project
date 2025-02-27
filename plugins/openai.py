@@ -1,7 +1,7 @@
 
 
 from pyrogram import Client, filters
-from plugins.Extra.engine import ask_ai
+from plugins.engine import ask_ai
 
 
 @Client.on_message(filters.command('ask'))
