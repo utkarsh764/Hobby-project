@@ -20,6 +20,19 @@
 - [ ] Invert PDFs (exam baad)
 - [ ] Renaming (exam baad)
 
+### 🚦 Commands
+```
+start - 🤖 Start the bot
+merge - 🛠 Start PDF merge
+done - 📂 Merge PDFs
+telegraph - 🌐 Get Telegraph link
+stickerid - 🛻 Get sticker ID
+accept - ✅ Accept pending join requests
+cancel - 🚫 Stop batch processing 
+users - 👥 Total users
+broadcast - 📩 Send message
+```
+
 ### ⚡️ Configs 
 * `BOT_TOKEN`  - Get bot token from @BotFather
 * `API_ID` - Get api id From my.telegram.org 
@@ -49,20 +62,7 @@
  - Has a custom Start-up pic.
  - Force subscribe available.
 
- - And many more 😴 
-
-### 🚦 Commands
-```
-start - 🤖 Start the bot
-merge - 🛠 Start PDF merge
-done - 📂 Merge PDFs
-telegraph - 🌐 Get Telegraph link
-stickerid - 🛻 Get sticker ID
-accept - ✅ Accept pending join requests
-cancel - 🚫 Stop batch processing 
-users - 👥 Total users
-broadcast - 📩 Send message
-```
+ - And many more 😴
 
 
 ### 🔗 important_Links
