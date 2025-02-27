@@ -6,54 +6,28 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from config import LOG_CHANNEL
 import fitz  # PyMuPDF
-from PIL import Image, ImageOps
-import io
 
 logger = logging.getLogger(__name__)
 
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
-user_invert_state = {}  # Track if a user is in the invert process
+user_invert_state = {}  # Track user process state
 
-# Invert PDF colors function
+# Function to invert PDF colors using PyMuPDF's transformation matrix
 async def invert_pdf_colors(input_pdf_path: str, output_pdf_path: str) -> None:
     """
-    Inverts the colors of a PDF file and saves the result to a new file.
-    :param input_pdf_path: Path to the input PDF file.
-    :param output_pdf_path: Path to save the inverted PDF file.
+    Inverts the colors of a PDF file without converting pages to images.
+    Keeps the original size and quality intact.
     """
     pdf_document = fitz.open(input_pdf_path)
-    new_pdf = fitz.open()
 
-    for page_num in range(len(pdf_document)):
-        page = pdf_document.load_page(page_num)
-        pix = page.get_pixmap()
+    for page in pdf_document:
+        # Apply color inversion transformation matrix
+        invert_matrix = fitz.Matrix(-1, 0, 0, -1, page.rect.width, page.rect.height)
+        page.apply_redactions()
+        page.insert_text((0, 0), "", rotate=0, transform=invert_matrix)
 
-        # Convert the pixmap to a PIL Image
-        img = Image.open(io.BytesIO(pix.tobytes()))
-
-        # Invert the colors of the image
-        inverted_img = ImageOps.invert(img.convert("RGB"))
-
-        # Convert the inverted image back to bytes
-        inverted_img_bytes = inverted_img.tobytes()
-
-        # Create a new pixmap from the inverted image
-        inverted_pix = fitz.Pixmap(
-            fitz.csRGB,  # Colorspace
-            pix.width,   # Width
-            pix.height,  # Height
-            inverted_img_bytes,  # Image data
-        )
-
-        # Create a new PDF page with the same dimensions as the original
-        new_page = new_pdf.new_page(width=page.rect.width, height=page.rect.height)
-
-        # Insert the inverted image into the new page
-        new_page.insert_image(new_page.rect, pixmap=inverted_pix)
-
-    # Save the new PDF with inverted colors
-    new_pdf.save(output_pdf_path, deflate=True)  # Enable compression
-    new_pdf.close()
+    # Save the new PDF with minimal compression (keeping quality)
+    pdf_document.save(output_pdf_path, deflate=False)  
     pdf_document.close()
 
 # Handle /invert command
@@ -117,4 +91,3 @@ async def handle_invert_command(client: Client, message: Message):
         # Clean up
         user_invert_state.pop(user_id, None)
 
-  
