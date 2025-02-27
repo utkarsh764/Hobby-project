@@ -237,7 +237,7 @@ async def handle_image_metadata(client: Client, message: Message):
 async def merge_files(client: Client, message: Message):
     await merge_plugin.merge_files(client, message)
 
-@Client.on_message(filters.text & filters.private & ~filters.command(["start", "cancel", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast", "rename"]) & ~filters.regex("https://t.me/"))           
+@Client.on_message(filters.text & filters.private & ~filters.command(["start", "cancel", "invert", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast", "rename"]) & ~filters.regex("https://t.me/"))           
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "waiting_for_filename":
