@@ -84,6 +84,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton("ʀᴇsᴛʀɪᴄᴛᴇᴅ ᴄᴏɴᴛᴇɴᴛ sᴀᴠᴇʀ", callback_data="restricted")],
             [InlineKeyboardButton('ᴛᴇʟᴇɢʀᴀᴘʜ', callback_data='tele'),   
              InlineKeyboardButton('ꜱᴛɪᴄᴋᴇʀ-ɪᴅ', callback_data='sticker')],
+            [InlineKeyboardButton('ғɪʟᴇ ʀᴇɴᴀᴍᴇ', callback_data='rename')],
             [InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start')]
         ])
     
@@ -94,6 +95,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton("🔒 Close", callback_data="close"),
              InlineKeyboardButton("🏠 𝙷𝙾𝙼𝙴 🏠", callback_data="start")]
         ])
+
+   elif data == "rename":
+        await query.message.edit_text(
+            text=mr.Rename_TXT,
+            reply_markup=InlineKeyboardMarkup([
+               [InlineKeyboardButton("◀️ 𝙱𝙰𝙲𝙺", callback_data = "start")]]
+            )
+        )
     
     elif data == "close":
         try:
