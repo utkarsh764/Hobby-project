@@ -6,7 +6,7 @@ from plugins.Rename.filedetect import refunc
 from pyrogram.types import (  InlineKeyboardButton, InlineKeyboardMarkup,ForceReply)
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from database.users_chats_db import db
+from helper.database import db
 import os 
 import humanize
 from PIL import Image
