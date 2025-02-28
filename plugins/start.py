@@ -5,30 +5,30 @@ from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
 import random
-   
-# Original Start Command 
+
+# Original Start Command
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
     except:
-        pass     
+        pass
     user = message.from_user
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
-    
+
     txt = (
         f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
         f"**🔘 Usᴇ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**"
     )
-    
+
     button = InlineKeyboardMarkup([
         [InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url='https://t.me/axa_bachha')],
         [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'),
          InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
     ])
-    
+
     if START_PIC:
         await message.reply_photo(START_PIC, caption=txt, reply_markup=button)
     else:
@@ -57,12 +57,11 @@ async def set_commands(client: Client, message: Message):
     ])
     await message.reply_text("✅ Bot commands have been set.")
 
-
 # Callback Query Handler
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
     data = query.data
-    
+
     if data == "start":
         txt = (
             f"> **✨👋🏻 Hey {query.from_user.mention} !!**\n\n"
@@ -74,7 +73,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'),
              InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
         ])
-    
+
     elif data == "help":
         txt = mr.HELP_TXT
         reply_markup = InlineKeyboardMarkup([
@@ -82,12 +81,12 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton("ʀᴇᴏ̨ᴜᴇsᴛ ᴀᴄᴄᴇᴘᴛᴏʀ", callback_data="request"),
              InlineKeyboardButton("ᴍᴇʀɢᴇ 📄", callback_data="combiner")],
             [InlineKeyboardButton("ʀᴇsᴛʀɪᴄᴛᴇᴅ ᴄᴏɴᴛᴇɴᴛ sᴀᴠᴇʀ", callback_data="restricted")],
-            [InlineKeyboardButton('ᴛᴇʟᴇɢʀᴀᴘʜ', callback_data='tele'),   
+            [InlineKeyboardButton('ᴛᴇʟᴇɢʀᴀᴘʜ', callback_data='tele'),
              InlineKeyboardButton('ꜱᴛɪᴄᴋᴇʀ-ɪᴅ', callback_data='sticker')],
             [InlineKeyboardButton('ғɪʟᴇ ʀᴇɴᴀᴍᴇ', callback_data='rename')],
             [InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start')]
         ])
-    
+
     elif data == "about":
         txt = mr.ABOUT_TXT.format(client.mention)
         reply_markup = InlineKeyboardMarkup([
@@ -96,14 +95,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
              InlineKeyboardButton("🏠 𝙷𝙾𝙼𝙴 🏠", callback_data="start")]
         ])
 
-    elif data == "rename":
+    elif data == "rename":  # Fixed indentation here
         await query.message.edit_text(
             text=mr.Rename_TXT,
             reply_markup=InlineKeyboardMarkup([
-               [InlineKeyboardButton("◀️ 𝙱𝙰𝙲𝙺", callback_data = "start")]]
-            )
+                [InlineKeyboardButton("◀️ 𝙱𝙰𝙲𝙺", callback_data="help")]
+            ])
         )
-    
+
     elif data == "close":
         try:
             await query.message.delete()
@@ -111,7 +110,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         except:
             await query.message.delete()
         return
-    
+
     elif data == "sticker":
         txt = """<b>⚝ ᴄᴏᴍᴍᴀɴᴅ : /stickerid
 
@@ -121,7 +120,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton("⟸ Bᴀᴄᴋ", callback_data="help"),
              InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url="telegram.me/axa_bachha")]
         ])
-    
+
     elif data == "tele":
         txt = """<b>
 ⚝ ᴜꜱᴀɢᴇ : /telegraph
@@ -134,9 +133,8 @@ https://envs.sh/Fyw.jpg
             [InlineKeyboardButton("⟸ Bᴀᴄᴋ", callback_data="help"),
              InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url="telegram.me/axa_bachha")]
         ])
-    
-    await query.message.edit_text(text=txt, reply_markup=reply_markup, disable_web_page_preview=True)
 
+    await query.message.edit_text(text=txt, reply_markup=reply_markup, disable_web_page_preview=True)
 
 # Additional Callback Queries
 CALLBACK_TEXTS = {
@@ -173,3 +171,4 @@ async def callback_text_handler(client: Client, query: CallbackQuery):
         ]),
         disable_web_page_preview=True
     )
+
