@@ -24,9 +24,7 @@ class mr(object):
                                 """
     HELP_TXT = """
 🌌 <b><u>My Functions 👇🏻</u></b>
- 
 """
-
     Rename_TXT = """
 🌌 <b><u>HOW TO SET THUMBNAIL</u></b>
   
