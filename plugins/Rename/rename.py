@@ -1,9 +1,9 @@
 from asyncio import sleep
-from plugins.Extra.rename.filedetect import refunc
+from plugins.Rename.filedetect import refunc
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply, CallbackQuery
 from pyrogram.errors import FloodWait
-from info import RENAME_MODE
+from config import RENAME_MODE
 import humanize
 import random
 
