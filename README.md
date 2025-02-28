@@ -58,12 +58,11 @@ broadcast - 📩 Send message
 
 
 #### 🥰 Features
- - PDF merging
- - Supports Broadcasts.
- - Has a custom Start-up pic.
- - Force subscribe available.
-
- - And many more 😴
+ * PDF merging
+ * Supports Broadcasts.
+ * Has a custom Start-up pic.
+ * Force subscribe available.
+ * File renaming 
 
 
 ### 🔗 important_Links
