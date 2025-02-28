@@ -1,5 +1,3 @@
-
-
 class mr(object):
     PROGRESS_BAR = """\n
 ╭━━━━❰ Gangster Hacking... ❱━➣
@@ -21,10 +19,12 @@ class mr(object):
 ├📊 𝙱𝚄𝙸𝙻𝙳-𝚂𝚃𝙰𝚃𝚄𝚂 : 𝐏𝐲𝐭𝐡𝐨𝐧 𝐯𝟑.𝟔.𝟖               
 ╰───────────────⍟
 </b>
-                                """
+"""
+
     HELP_TXT = """
 🌌 <b><u>My Functions 👇🏻</u></b>
 """
+
     Rename_TXT = """
 🌌 <b><u>HOW TO SET THUMBNAIL</u></b>
   
@@ -46,16 +46,4 @@ Example:- /set_caption 📕 File Name: {filename}
 ℹ️ For more help:- <a href=https://t.me/LazyPrincessSupport>Support BOX</a>
 """
 
-
-#⚠️ don't remove our credits 🙏😢😢
-    DEV_TXT = """
-<b><u>Special Thanks & Developers</b></u> 
-
-» 𝗛𝗢𝗪 𝗧𝗢 𝗗𝗘𝗣𝗟𝗢𝗬 : <a href=https://www.youtube.com/channel/UCY-iDra0x2hdd9PdHKcZkRw>Watch Tutorial</a>
-
-• 😈 <a href=https://github.com/LazyDeveloperr>LazyDeveloper Github</a>
-• 😈 <a href=https://t.me/LazyDeveloper>LazyDeveloper Tg Channel</a>
-• 😈 <a href=https://t.me/mRiderDM>Direct-Msg-TG</a>
-• 😈 <a href=https://t.me/real_MoviesAdda1>Join Movies Adda</a>
-• 😈 <a href=https://t.me/GitHub_noob>Thanks- Github Noob</a>
-"""
+ 
