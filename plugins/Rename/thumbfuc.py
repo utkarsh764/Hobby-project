@@ -1,6 +1,6 @@
 
 from pyrogram import Client, filters, enums
-from database.users_chats_db import db
+from helper.database import db
 from config import RENAME_MODE
 
 @Client.on_message(filters.private & filters.command(['view_thumb']))
