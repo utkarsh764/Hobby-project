@@ -27,7 +27,7 @@ class mr(object):
  
 """
 
-     Rename_TXT = """
+    Rename_TXT = """
 🌌 <b><u>HOW TO SET THUMBNAIL</u></b>
   
 •> /start a bot and send any picture to automatically set thumbnail.
