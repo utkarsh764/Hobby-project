@@ -1,5 +1,3 @@
-
-
 from pyrogram import Client, filters
 from pyrogram.enums import MessageMediaType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
@@ -20,6 +18,11 @@ async def refunc(client, message, new_name, msg):
                 new_name = new_name
             if "." in new_name:
                 new_name = new_name.replace(".", "")  
+            
+            if file.mime_type == "application/pdf":
+                await client.send_callback_query(message.chat.id, message.id, "upload_document")
+                return
+            
             if mime == "video":
                 markup = InlineKeyboardMarkup([[
                     InlineKeyboardButton("📁 Document", callback_data="upload_document"),
@@ -40,6 +43,12 @@ async def refunc(client, message, new_name, msg):
             except:
                 await message.reply_text("**Error** :  No  Extension in File, Not Supporting")
                 return
+            
+            # Check if the file is a PDF
+            if file.mime_type == "application/pdf":
+                await client.send_callback_query(message.chat.id, message.id, "upload_document")
+                return  
+            
             if mime == "video":
                 markup = InlineKeyboardMarkup([[InlineKeyboardButton(
                     "📁 Document", callback_data="upload_document"), InlineKeyboardButton("🎥 Video", callback_data="upload_video")]])
@@ -52,3 +61,4 @@ async def refunc(client, message, new_name, msg):
             await message.reply_text(f"**Select the output file type**\n**🎞New Name ->** :- {out_filename}", reply_to_message_id=msg.id, reply_markup=markup)
     except Exception as e:
         print(f"error: {e}")
+        
