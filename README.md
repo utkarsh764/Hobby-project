@@ -17,8 +17,9 @@
 - [x] Force subscribe
 - [x] improve force sub interface 
 - [X] /set command ,to set commands for bot
+- [X] Renaming
 - [ ] Invert PDFs (exam baad)
-- [ ] Renaming (exam baad)
+
 
 ### 🚦 Commands
 ```
