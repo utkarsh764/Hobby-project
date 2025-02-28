@@ -96,7 +96,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
              InlineKeyboardButton("🏠 𝙷𝙾𝙼𝙴 🏠", callback_data="start")]
         ])
 
-   elif data == "rename":
+    elif data == "rename":
         await query.message.edit_text(
             text=mr.Rename_TXT,
             reply_markup=InlineKeyboardMarkup([
