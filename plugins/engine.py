@@ -2,7 +2,7 @@
 import openai
 
 async def ai(query):
-    openai.api_key = "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"  # Replace with your OpenAI API key
+    openai.api_key = "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"  # Replace with your OpenAI API key
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",  # Using GPT-3.5 Turbo
         messages=[{"role": "user", "content": query}],
