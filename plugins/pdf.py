@@ -242,7 +242,7 @@ class MergePlugin:
                         caption="**🎉 Here is your merged PDF 📄.**",
                         progress=lambda current, total: asyncio.create_task(
                             self.show_upload_progress(current, total, progress_message, start_time)
-                    )
+                    ))
 
                     # Send sticker immediately after sending PDF to user
                     await client.send_sticker(
