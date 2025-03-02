@@ -14,7 +14,7 @@ async def id_command(client: Client, message: Message):
         chat_title = message.from_user.full_name
 
     # Prepare the response text
-    id_text = f"**Chat ID of** {chat_title} **is** `{message.chat.id}`"
+    id_text = f"**Chat ID of** {chat_title} **is**\n`{message.chat.id}`"
 
     # Send the response
     await client.send_message(
