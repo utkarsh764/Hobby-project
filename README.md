@@ -6,7 +6,7 @@
 
 <p align="center">🤍 Thanks for Being Here 🤍</p>
 
-### To-Dos
+### ⋗ To-Dos
 - [x] PDFs merging
 - [X] Image merging 
 - [x] stickerid + telegraph + id
