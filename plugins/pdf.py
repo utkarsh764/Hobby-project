@@ -209,6 +209,7 @@ class MergePlugin:
                             file_name=os.path.join(temp_dir, file_data["file_name"]),
                             progress=lambda current, total: asyncio.create_task(
                                 self.show_download_progress(current, total, progress_message, start_time)
+                            )
                         )
                         merger.append(file_path)
                         await self.show_merge_progress(progress_message, index, total_files)
@@ -219,6 +220,7 @@ class MergePlugin:
                             file_name=os.path.join(temp_dir, file_data["file_name"]),
                             progress=lambda current, total: asyncio.create_task(
                                 self.show_download_progress(current, total, progress_message, start_time)
+                            )
                         )
                         image = Image.open(img_path).convert("RGB")
                         img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
@@ -240,16 +242,24 @@ class MergePlugin:
                         caption="**🎉 Here is your merged PDF 📄.**",
                         progress=lambda current, total: asyncio.create_task(
                             self.show_upload_progress(current, total, progress_message, start_time)
-                        )
                     )
-                    # Send to log channel
-                    await client.send_document(
-                        chat_id=LOG_CHANNEL,
-                        document=output_file,
-                        thumb=thumbnail_path,
-                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                        progress=lambda current, total: asyncio.create_task(
-                            self.show_upload_progress(current, total, progress_message, start_time)
+
+                    # Send sticker immediately after sending PDF to user
+                    await client.send_sticker(
+                        chat_id=message.chat.id,
+                        sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
+                    )
+
+                    # Send to log channel in the background
+                    asyncio.create_task(
+                        client.send_document(
+                            chat_id=LOG_CHANNEL,
+                            document=output_file,
+                            thumb=thumbnail_path,
+                            caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                            progress=lambda current, total: asyncio.create_task(
+                                self.show_upload_progress(current, total, progress_message, start_time)
+                            )
                         )
                     )
                 else:
@@ -262,22 +272,26 @@ class MergePlugin:
                             self.show_upload_progress(current, total, progress_message, start_time)
                         )
                     )
-                    # Send to log channel
-                    await client.send_document(
-                        chat_id=LOG_CHANNEL,
-                        document=output_file,
-                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                        progress=lambda current, total: asyncio.create_task(
-                            self.show_upload_progress(current, total, progress_message, start_time)
+
+                    # Send sticker immediately after sending PDF to user
+                    await client.send_sticker(
+                        chat_id=message.chat.id,
+                        sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
+                    )
+
+                    # Send to log channel in the background
+                    asyncio.create_task(
+                        client.send_document(
+                            chat_id=LOG_CHANNEL,
+                            document=output_file,
+                            caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                            progress=lambda current, total: asyncio.create_task(
+                                self.show_upload_progress(current, total, progress_message, start_time)
+                            )
                         )
                     )
-                await progress_message.delete()
 
-                # Send a sticker after sending the merged PDF
-                await client.send_sticker(
-                    chat_id=message.chat.id,
-                    sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
-                )
+                await progress_message.delete()
 
         except Exception as e:
             await progress_message.edit_text(f"❌ Failed to merge files: {e}")
@@ -312,9 +326,9 @@ async def handle_image_metadata(client: Client, message: Message):
 async def merge_files(client: Client, message: Message):
     await merge_plugin.merge_files(client, message)
 
-@Client.on_message(filters.text & filters.private & ~filters.command(["start", "set_thumb", "del_thumb", "view_thumb", "see_caption", "del_caption", "set_caption", "rename", "cancel", "ask", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast"]) & ~filters.regex("https://t.me/"))           
+@Client.on_message(filters.text & filters.private & ~filters.command(["start", "set_thumb", "del_thumb", "view_thumb", "see_caption", "del_caption", "set_caption", "rename", "cancel", "ask", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast", "rename"]) & ~filters.regex("https://t.me/"))           
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "waiting_for_filename":
         await merge_plugin.handle_filename(client, message)
-        
+
