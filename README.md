@@ -69,16 +69,16 @@ broadcast - 📩 sᴇɴᴅ ʙʀᴏᴀᴅᴄᴀsᴛ (ᴏᴡɴᴇʀ)
  * File renaming 
 
 
-### 🔗 important_Links
-- [🤩 Create Auto Filter BOT](https://www.youtube.com/watch?v=jw3e4L1u-Vo&t=22s)
-- [🤩 Create Movie Website](https://www.youtube.com/watch?v=h3Uvr15ZPnc)
-- [🤩 Create Movie Request BOT](https://www.youtube.com/watch?v=mIEv7MjLj2U&t=38s)
-- [❣️ Join Youtube](https://www.youtube.com/channel/UCY-iDra0x2hdd9PdHKcZkRw)
-
-
 #### 🧡 Credits... 🧡
 - [🔥 AMIT SINGH](https://github.com/Ur_Amit_01) 
 - [🔥 Pyrogram](https://github.com/pyrogram/pyrogram)
+
+# Important dates
+* More features soon 
+* 26 Feb 2025 - Renaming function added
+* 17 Feb 2025 - Join acceptor + id + telegram + stickerid
+* 12 Feb 2025 - PDF Merging added
+
 
 
 ### 🤩 INSPIRATION
