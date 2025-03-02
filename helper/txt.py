@@ -26,24 +26,20 @@ class mr(object):
 """
 
     Rename_TXT = """
-🌌 <b><u>HOW TO SET THUMBNAIL</u></b>
-  
-•> /start a bot and send any picture to automatically set thumbnail.
-•> /delthumb use this command and delete your old thumbnail.
-•> /viewthumb use this command to view your current thumbnail.
+<blockquote>✏️ <b><u>ʜᴏᴡ ᴛᴏ ʀᴇɴᴀᴍᴇ ᴀ ꜰɪʟᴇ</ᴜ></ʙ></blockquote>
+•> /rename ᴀғᴛᴇʀ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ sᴇɴᴅ ʏᴏᴜʀ ғɪʟᴇ ᴛᴏ ʀᴇɴᴀᴍᴇ.
 
-📑 <b><u>HOW TO SET CUSTOM CAPTION</u></b>
-•> /set_caption - set a custom caption
-•> /see_caption - see your custom caption
-•> /del_caption - delete custom caption
+<blockquote>🌌 <b><u>ʜᴏᴡ ᴛᴏ ꜱᴇᴛ ᴛʜᴜᴍʙɴᴀɪʟ</u></b></blockquote>
+•> /set_thumb ꜱᴇɴᴅ ᴘɪᴄᴛᴜʀᴇ ᴛᴏ ꜱᴇᴛ ᴛʜᴜᴍʙɴᴀɪʟ.  
+•> /delthumb ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ᴀɴᴅ ᴅᴇʟᴇᴛᴇ ʏᴏᴜʀ ᴏʟᴅ ᴛʜᴜᴍʙɴᴀɪʟ.  
+•> /viewthumb ᴜꜱᴇ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ ᴛᴏ ᴠɪᴇᴡ ʏᴏᴜʀ ᴄᴜʀʀᴇɴᴛ ᴛʜᴜᴍʙɴᴀɪʟ.  
 
-Example:- /set_caption 📕 File Name: {filename}
-💾 Size: {filesize}
-⏰ Duration: {duration}
+<blockquote>📑 <b><u>ʜᴏᴡ ᴛᴏ ꜱᴇᴛ ᴄᴜꜱᴛᴏᴍ ᴄᴀᴘᴛɪᴏɴ</u></b></blockquote>
+•> /set_caption - ꜱᴇᴛ ᴀ ᴄᴜꜱᴛᴏᴍ ᴄᴀᴘᴛɪᴏɴ  
+•> /see_caption - ꜱᴇᴇ ʏᴏᴜʀ ᴄᴜꜱᴛᴏᴍ ᴄᴀᴘᴛɪᴏɴ  
+•> /del_caption - ᴅᴇʟᴇᴛᴇ ᴄᴜꜱᴛᴏᴍ ᴄᴀᴘᴛɪᴏɴ  
 
-✏️ <b><u>HOW TO RENAME A FILE</u></b>
-•> send any file and click rename option and type new file name and \n send select [ document, video, audio ]👈 choice this.
-ℹ️ For more help:- <a href=https://t.me/LazyPrincessSupport>Support BOX</a>
+ᴇxᴀᴍᴘʟᴇ:- /set_caption 📕 ꜰɪʟᴇ ɴᴀᴍᴇ: {ꜰɪʟᴇɴᴀᴍᴇ}  
+💾 ꜱɪᴢᴇ: `{filesize}`  
+⏰ ᴅᴜʀᴀᴛɪᴏɴ: `{duration}`  
 """
-
- 
