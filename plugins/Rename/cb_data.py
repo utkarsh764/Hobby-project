@@ -30,13 +30,13 @@ async def doc(bot, update):
         new_filename = new_name.split(":-")[1]
         file = update.message.reply_to_message
         file_path = f"downloads/{new_filename}"
-        ms = await update.message.edit("⚠️__**Please wait...**__\n\n__Downloading file to my server...__")
+        ms = await update.message.edit("🥹__**Please wait...**__\n\n__Downloading file to my server... 😋__")
         c_time = time.time()
         try:
             path = await bot.download_media(
                 message=file,
                 progress=progress_for_pyrogram,
-                progress_args=("**⚠️ Please wait VJ Hack is in processing**", ms, c_time))
+                progress_args=("**⚠️ Processing please wait**", ms, c_time))
         except Exception as e:
             await ms.edit(e)
             return
