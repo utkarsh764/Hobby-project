@@ -1,5 +1,5 @@
 
-from plugins.Extra.utils import progress_for_pyrogram, convert, humanbytes
+from plugins.Rename.utils import progress_for_pyrogram, convert, humanbytes
 from pyrogram import Client, filters
 from plugins.Rename.filedetect import refunc
 from pyrogram.types import (  InlineKeyboardButton, InlineKeyboardMarkup,ForceReply)
