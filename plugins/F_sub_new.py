@@ -1,7 +1,8 @@
 import sys
 from datetime import datetime
 from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.enums import ParseMode
 from config import (
     F_SUB_1, F_SUB_2, F_SUB_3, F_SUB_4,  # Replace FORCE_SUB_CHANNEL1, FORCE_SUB_CHANNEL2, etc.
     FORCE_PIC, FORCE_MSG, CHANNEL_ID
