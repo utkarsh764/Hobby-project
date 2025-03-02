@@ -73,7 +73,7 @@ broadcast - 📩 sᴇɴᴅ ʙʀᴏᴀᴅᴄᴀsᴛ (ᴏᴡɴᴇʀ)
 - [🔥 AMIT SINGH](https://github.com/Ur_Amit_01) 
 - [🔥 Pyrogram](https://github.com/pyrogram/pyrogram)
 
-# Important dates
+## Important dates
 * More features soon 
 * 26 Feb 2025 - Renaming function added
 * 17 Feb 2025 - Join acceptor + id + telegram + stickerid
