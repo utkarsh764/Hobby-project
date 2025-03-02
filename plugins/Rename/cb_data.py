@@ -30,7 +30,7 @@ async def doc(bot, update):
         new_filename = new_name.split(":-")[1]
         file = update.message.reply_to_message
         file_path = f"downloads/{new_filename}"
-        ms = await update.message.edit("🥹__**Please wait...**__\n\n__Downloading file to my server... 😋__")
+        ms = await update.message.edit("🥹__**Please wait...**__\n__Downloading file to my server... 😋__")
         c_time = time.time()
         try:
             path = await bot.download_media(
