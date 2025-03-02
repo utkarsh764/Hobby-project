@@ -4,7 +4,6 @@ import re
 import logging
 import tempfile
 import asyncio
-import time
 from PIL import Image
 from pyrogram import Client, filters
 from PyPDF2 import PdfMerger
@@ -29,59 +28,13 @@ class MergePlugin:
             self.user_states.pop(user_id, None)
             logger.info(f"Reset state for user {user_id} due to inactivity.")
 
-    async def show_download_progress(self, current, total, progress_message, start_time):
-        elapsed_time = time.time() - start_time
-        speed = current / elapsed_time if elapsed_time > 0 else 0  # in bytes per second
-        speed_mb = speed / (1024 * 1024)  # Convert to MB/s
-
+    async def show_progress_bar(self, progress_message, current, total, bar_length=10):
         progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
+        filled_length = int(bar_length * progress)
+        bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
         percentage = int(progress * 100)
-
-        # Calculate remaining time
-        remaining_bytes = total - current
-        remaining_time = remaining_bytes / speed if speed > 0 else 0
-
-        # Format the progress message
-        progress_text = (
-            f"╭━━━━❰ File Is Downloading... ❱━➣\n"
-            f"┣⪼ 🗂️ : {current / (1024 * 1024):.2f} MB | {total / (1024 * 1024):.2f} MB\n"
-            f"┣⪼ ⏳️ : {percentage}%\n"
-            f"┣⪼ 🚀 : {speed_mb:.2f} MB/s\n"
-            f"┣⪼ ⏱️ : {int(remaining_time)}s\n"
-            f"╰━━━━━━━━━━━━━━━➣"
-        )
-        await progress_message.edit_text(progress_text)
-
-    async def show_merge_progress(self, progress_message, current, total):
-        progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
-        filled_length = int(10 * progress)
-        bar = "●" * filled_length + "○" * (10 - filled_length)  # Filled and empty parts
-        percentage = int(progress * 100)
-        text = f"**🛠️ Merging Files...**\n`[{bar}]` {percentage}% ({current}/{total})"
+        text = f"**🛠️ Processing...**\n`[{bar}]` {percentage}% ({current}/{total})"
         await progress_message.edit_text(text)
-
-    async def show_upload_progress(self, current, total, progress_message, start_time):
-        elapsed_time = time.time() - start_time
-        speed = current / elapsed_time if elapsed_time > 0 else 0  # in bytes per second
-        speed_mb = speed / (1024 * 1024)  # Convert to MB/s
-
-        progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
-        percentage = int(progress * 100)
-
-        # Calculate remaining time
-        remaining_bytes = total - current
-        remaining_time = remaining_bytes / speed if speed > 0 else 0
-
-        # Format the progress message
-        progress_text = (
-            f"╭━━━━❰ File Is Uploading... ❱━➣\n"
-            f"┣⪼ 🗂️ : {current / (1024 * 1024):.2f} MB | {total / (1024 * 1024):.2f} MB\n"
-            f"┣⪼ ⏳️ : {percentage}%\n"
-            f"┣⪼ 🚀 : {speed_mb:.2f} MB/s\n"
-            f"┣⪼ ⏱️ : {int(remaining_time)}s\n"
-            f"╰━━━━━━━━━━━━━━━➣"
-        )
-        await progress_message.edit_text(progress_text)
 
     async def start_file_collection(self, client: Client, message: Message):
         user_id = message.from_user.id
@@ -109,7 +62,7 @@ class MergePlugin:
             return
 
         if message.document.file_size > MAX_FILE_SIZE:
-            await message.reply_text("🚫 File size is too large! Please send a file under 500MB.")
+            await message.reply_text("🚫 File size is too large! Please send a file under 20MB.")
             return
 
         self.user_file_metadata[user_id].append(
@@ -203,95 +156,53 @@ class MergePlugin:
                 total_files = len(self.user_file_metadata[user_id])
                 for index, file_data in enumerate(self.user_file_metadata[user_id], start=1):
                     if file_data["type"] == "pdf":
-                        start_time = time.time()
-                        file_path = await client.download_media(
-                            file_data["file_id"],
-                            file_name=os.path.join(temp_dir, file_data["file_name"]),
-                            progress=lambda current, total: asyncio.create_task(
-                                self.show_download_progress(current, total, progress_message, start_time)
-                            )
-                        )
+                        file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                         merger.append(file_path)
-                        await self.show_merge_progress(progress_message, index, total_files)
+                        await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
                     elif file_data["type"] == "image":
-                        start_time = time.time()
-                        img_path = await client.download_media(
-                            file_data["file_id"],
-                            file_name=os.path.join(temp_dir, file_data["file_name"]),
-                            progress=lambda current, total: asyncio.create_task(
-                                self.show_download_progress(current, total, progress_message, start_time)
-                            )
-                        )
+                        img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                         image = Image.open(img_path).convert("RGB")
                         img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                         image.save(img_pdf_path, "PDF")
                         merger.append(img_pdf_path)
-                        await self.show_merge_progress(progress_message, index, total_files)
+                        await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
 
                 merger.write(output_file)
                 merger.close()
 
                 # Send the merged file with or without the thumbnail
-                start_time = time.time()
                 if thumbnail_path:
-                    # Send to user
                     await client.send_document(
                         chat_id=message.chat.id,
                         document=output_file,
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
-                        progress=lambda current, total: asyncio.create_task(
-                            self.show_upload_progress(current, total, progress_message, start_time)
-                    ))
-
-                    # Send sticker immediately after sending PDF to user
-                    await client.send_sticker(
-                        chat_id=message.chat.id,
-                        sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
                     )
-
-                    # Send to log channel in the background
-                    asyncio.create_task(
-                        client.send_document(
-                            chat_id=LOG_CHANNEL,
-                            document=output_file,
-                            thumb=thumbnail_path,
-                            caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                            progress=lambda current, total: asyncio.create_task(
-                                self.show_upload_progress(current, total, progress_message, start_time)
-                            )
-                        )
+                    await client.send_document(
+                        chat_id=LOG_CHANNEL,
+                        document=output_file,
+                        thumb=thumbnail_path,
+                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
                     )
                 else:
-                    # Send to user
                     await client.send_document(
                         chat_id=message.chat.id,
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
-                        progress=lambda current, total: asyncio.create_task(
-                            self.show_upload_progress(current, total, progress_message, start_time)
-                        )
                     )
-
-                    # Send sticker immediately after sending PDF to user
-                    await client.send_sticker(
-                        chat_id=message.chat.id,
-                        sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
-                    )
-
-                    # Send to log channel in the background
-                    asyncio.create_task(
-                        client.send_document(
-                            chat_id=LOG_CHANNEL,
-                            document=output_file,
-                            caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                            progress=lambda current, total: asyncio.create_task(
-                                self.show_upload_progress(current, total, progress_message, start_time)
-                            )
-                        )
+                    await client.send_document(
+                        chat_id=LOG_CHANNEL,
+                        document=output_file,
+                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
                     )
 
                 await progress_message.delete()
+
+                # Send a sticker after sending the merged PDF
+                await client.send_sticker(
+                    chat_id=message.chat.id,
+                    sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
+                )
 
         except Exception as e:
             await progress_message.edit_text(f"❌ Failed to merge files: {e}")
