@@ -12,7 +12,4 @@ pyrogram==2.0.106
 TgCrypto
 dnspython
 aiohttp
-openai==0.28
-yt-dlp
-pycryptodomex
 pikepdf
