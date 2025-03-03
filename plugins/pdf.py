@@ -170,7 +170,7 @@ class MergePlugin:
                 merger.write(output_file)
                 merger.close()
 
-                # Send the merged file with or without the thumbnail
+                # Send the merged file to the user
                 if thumbnail_path:
                     await client.send_document(
                         chat_id=message.chat.id,
@@ -178,31 +178,21 @@ class MergePlugin:
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
-                    await client.send_document(
-                        chat_id=LOG_CHANNEL,
-                        document=output_file,
-                        thumb=thumbnail_path,
-                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                    )
                 else:
                     await client.send_document(
                         chat_id=message.chat.id,
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
-                    await client.send_document(
-                        chat_id=LOG_CHANNEL,
-                        document=output_file,
-                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                    )
 
-                await progress_message.delete()
-
-                # Send a sticker after sending the merged PDF
+                # Send the sticker immediately after sending the PDF
                 await client.send_sticker(
                     chat_id=message.chat.id,
                     sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
                 )
+
+                # Send the merged file to the log channel in the background
+                asyncio.create_task(self.send_to_log_channel(client, output_file, thumbnail_path, message))
 
         except Exception as e:
             await progress_message.edit_text(f"❌ Failed to merge files: {e}")
@@ -212,6 +202,24 @@ class MergePlugin:
             self.user_file_metadata.pop(user_id, None)
             self.user_states.pop(user_id, None)
             self.pending_filename_requests.pop(user_id, None)
+
+    async def send_to_log_channel(self, client: Client, output_file: str, thumbnail_path: str, message: Message):
+        try:
+            if thumbnail_path:
+                await client.send_document(
+                    chat_id=LOG_CHANNEL,
+                    document=output_file,
+                    thumb=thumbnail_path,
+                    caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                )
+            else:
+                await client.send_document(
+                    chat_id=LOG_CHANNEL,
+                    document=output_file,
+                    caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                )
+        except Exception as e:
+            logger.error(f"Failed to send file to log channel: {e}")
 
 # Initialize the plugin
 merge_plugin = MergePlugin()
