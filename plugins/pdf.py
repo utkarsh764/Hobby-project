@@ -12,7 +12,7 @@ from config import LOG_CHANNEL
 
 logger = logging.getLogger(__name__)
 
-MAX_FILE_SIZE = 500 * 1024 * 1024  # 500MB
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
 
 class MergePlugin:
     def __init__(self):
@@ -170,7 +170,7 @@ class MergePlugin:
                 merger.write(output_file)
                 merger.close()
 
-                # Send the merged file to the user
+                # Send the merged file with or without the thumbnail
                 if thumbnail_path:
                     await client.send_document(
                         chat_id=message.chat.id,
@@ -178,21 +178,31 @@ class MergePlugin:
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
+                    await client.send_document(
+                        chat_id=LOG_CHANNEL,
+                        document=output_file,
+                        thumb=thumbnail_path,
+                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                    )
                 else:
                     await client.send_document(
                         chat_id=message.chat.id,
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
+                    await client.send_document(
+                        chat_id=LOG_CHANNEL,
+                        document=output_file,
+                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                    )
 
-                # Send the sticker immediately after sending the PDF
+                await progress_message.delete()
+
+                # Send a sticker after sending the merged PDF
                 await client.send_sticker(
                     chat_id=message.chat.id,
                     sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
                 )
-
-                # Send the merged file to the log channel in the background
-                asyncio.create_task(self.send_to_log_channel(client, output_file, thumbnail_path, message))
 
         except Exception as e:
             await progress_message.edit_text(f"❌ Failed to merge files: {e}")
@@ -202,24 +212,6 @@ class MergePlugin:
             self.user_file_metadata.pop(user_id, None)
             self.user_states.pop(user_id, None)
             self.pending_filename_requests.pop(user_id, None)
-
-    async def send_to_log_channel(self, client: Client, output_file: str, thumbnail_path: str, message: Message):
-        try:
-            if thumbnail_path:
-                await client.send_document(
-                    chat_id=LOG_CHANNEL,
-                    document=output_file,
-                    thumb=thumbnail_path,
-                    caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                )
-            else:
-                await client.send_document(
-                    chat_id=LOG_CHANNEL,
-                    document=output_file,
-                    caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
-                )
-        except Exception as e:
-            logger.error(f"Failed to send file to log channel: {e}")
 
 # Initialize the plugin
 merge_plugin = MergePlugin()
@@ -245,9 +237,9 @@ async def handle_image_metadata(client: Client, message: Message):
 async def merge_files(client: Client, message: Message):
     await merge_plugin.merge_files(client, message)
 
-@Client.on_message(filters.text & filters.private & ~filters.command(["start", "yl", "compress", "set_thumb", "del_thumb", "view_thumb", "see_caption", "del_caption", "set_caption", "rename", "cancel", "ask", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast"]) & ~filters.regex("https://t.me/"))           
+@Client.on_message(filters.text & filters.private & ~filters.command(["start", "set_thumb", "del_thumb", "view_thumb", "see_caption", "del_caption", "set_caption", "rename", "cancel", "ask", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast", "rename"]) & ~filters.regex("https://t.me/"))           
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "waiting_for_filename":
         await merge_plugin.handle_filename(client, message)
-                        
+
