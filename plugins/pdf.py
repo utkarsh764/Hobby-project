@@ -31,7 +31,7 @@ class MergePlugin:
             self.user_states.pop(user_id, None)
             logger.info(f"Reset state for user {user_id} due to inactivity.")
 
-    async def show_progress_bar(self, progress_message, current, total, action="Processing"):
+    async def show_progress_bar(self, progress_message, current, total, user_id, action="Processing"):
         """Show upload progress in the specified format."""
         if user_id not in self.upload_start_time:
             self.upload_start_time[user_id] = time.time()
@@ -202,14 +202,14 @@ class MergePlugin:
                     if file_data["type"] == "pdf":
                         file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                         merger.append(file_path)
-                        await self.show_progress_bar(progress_message, index, total_files, action="Merging")  # Update progress bar
+                        await self.show_progress_bar(progress_message, index, total_files, user_id, action="Merging")  # Update progress bar
                     elif file_data["type"] == "image":
                         img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                         image = Image.open(img_path).convert("RGB")
                         img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                         image.save(img_pdf_path, "PDF")
                         merger.append(img_pdf_path)
-                        await self.show_progress_bar(progress_message, index, total_files, action="Merging")  # Update progress bar
+                        await self.show_progress_bar(progress_message, index, total_files, user_id, action="Merging")  # Update progress bar
 
                 merger.write(output_file)
                 merger.close()
@@ -222,7 +222,7 @@ class MergePlugin:
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
                         progress=lambda current, total: asyncio.create_task(
-                            self.show_progress_bar(progress_message, current, total, action="Uploading")
+                            self.show_progress_bar(progress_message, current, total, user_id, action="Uploading")
                         ),
                     )
                 else:
@@ -231,7 +231,7 @@ class MergePlugin:
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
                         progress=lambda current, total: asyncio.create_task(
-                            self.show_progress_bar(progress_message, current, total, action="Uploading")
+                            self.show_progress_bar(progress_message, current, total, user_id, action="Uploading")
                         ),
                     )
 
