@@ -1,5 +1,6 @@
 import os
 import re
+import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from yt_dlp import YoutubeDL
@@ -84,10 +85,14 @@ async def handle_callback(client: Client, callback_query: CallbackQuery):
         ydl_opts = {
             "format": f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]",
             "outtmpl": output_template,
-            "progress_hooks": [lambda d: progress_hook(d, client, chat_id)],
+            "progress_hooks": [lambda d: progress_hook(d, user_id, chat_id)],
         }
 
         try:
+            # Start a background task to monitor progress
+            asyncio.create_task(monitor_progress(user_id, chat_id))
+
+            # Download the video
             with YoutubeDL(ydl_opts) as ydl:
                 ydl.download([madxapi_link])
 
@@ -105,11 +110,20 @@ async def handle_callback(client: Client, callback_query: CallbackQuery):
             await callback_query.message.reply_text(f"Failed to download video: {e}")
             del user_data[user_id]  # Clear user data on error
 
-# Progress hook to show download progress
-def progress_hook(d, client, chat_id):
+# Progress hook to update download progress
+def progress_hook(d, user_id, chat_id):
     if d["status"] == "downloading":
         progress = d["_percent_str"]
         speed = d["_speed_str"]
         eta = d["_eta_str"]
-        client.send_message(chat_id, f"Downloading... {progress} at {speed}, ETA: {eta}")
+        user_data[user_id]["progress"] = f"Downloading... {progress} at {speed}, ETA: {eta}"
+
+# Background task to monitor progress and send updates
+async def monitor_progress(user_id, chat_id):
+    while user_id in user_data:
+        if "progress" in user_data[user_id]:
+            await app.send_message(chat_id, user_data[user_id]["progress"])
+            await asyncio.sleep(3)  # Send progress updates every 3 seconds
+        else:
+            await asyncio.sleep(1)
 
