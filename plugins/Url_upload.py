@@ -36,9 +36,9 @@ async def start_download(client: Client, message: Message):
     # Create inline buttons for quality selection
     keyboard = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("240p", callback_data="quality_240")
+            [InlineKeyboardButton("240p", callback_data="quality_240"),
             InlineKeyboardButton("360p", callback_data="quality_360")],
-            [InlineKeyboardButton("480p", callback_data="quality_480")
+            [InlineKeyboardButton("480p", callback_data="quality_480"),
             InlineKeyboardButton("720p", callback_data="quality_720")],
             [InlineKeyboardButton("✖️ Cancel ✖️", callback_data="cancel")]
         ]
