@@ -13,3 +13,4 @@ TgCrypto
 dnspython
 aiohttp
 openai==0.28
+yt-dlp
