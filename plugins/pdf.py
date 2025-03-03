@@ -1,3 +1,5 @@
+import time
+import math
 import requests
 import os
 import re
@@ -19,6 +21,7 @@ class MergePlugin:
         self.pending_filename_requests = {}
         self.user_file_metadata = {}  # Store metadata for each user's files
         self.user_states = {}  # Track user states
+        self.upload_start_time = {}  # Track upload start time for each user
 
     async def reset_user_state(self, user_id: int):
         await asyncio.sleep(120)  # 2 minutes
@@ -28,13 +31,54 @@ class MergePlugin:
             self.user_states.pop(user_id, None)
             logger.info(f"Reset state for user {user_id} due to inactivity.")
 
-    async def show_progress_bar(self, progress_message, current, total, bar_length=10):
-        progress = min(current / total, 1.0)  # Ensure progress doesn't exceed 1.0
-        filled_length = int(bar_length * progress)
-        bar = "●" * filled_length + "○" * (bar_length - filled_length)  # Filled and empty parts
-        percentage = int(progress * 100)
-        text = f"**🛠️ Processing...**\n`[{bar}]` {percentage}% ({current}/{total})"
-        await progress_message.edit_text(text)
+    async def show_progress_bar(self, progress_message, current, total, action="Processing"):
+        """Show upload progress in the specified format."""
+        if user_id not in self.upload_start_time:
+            self.upload_start_time[user_id] = time.time()
+
+        elapsed_time = time.time() - self.upload_start_time[user_id]
+        upload_speed = current / elapsed_time if elapsed_time > 0 else 0  # Bytes per second
+        remaining_bytes = total - current
+        remaining_time = remaining_bytes / upload_speed if upload_speed > 0 else 0  # Seconds
+
+        # Convert upload speed to a readable format (e.g., KB/s, MB/s)
+        if upload_speed < 1024:
+            speed_str = f"{upload_speed:.2f} B/s"
+        elif upload_speed < 1024 * 1024:
+            speed_str = f"{upload_speed / 1024:.2f} KB/s"
+        else:
+            speed_str = f"{upload_speed / (1024 * 1024):.2f} MB/s"
+
+        # Convert remaining time to a readable format (e.g., seconds, minutes)
+        if remaining_time < 60:
+            time_str = f"{int(remaining_time)}s"
+        else:
+            time_str = f"{int(remaining_time // 60)}m {int(remaining_time % 60)}s"
+
+        # Calculate percentage
+        percentage = (current / total) * 100
+
+        # Format the progress message
+        progress_text = f"""
+╭━━━━❰ Uploading... ❱━➣
+┣⪼ 🗂️ : {self.format_bytes(current)} | {self.format_bytes(total)}
+┣⪼ ⏳️ : {percentage:.1f}%
+┣⪼ 🚀 : {speed_str}
+┣⪼ ⏱️ : {time_str}
+╰━━━━━━━━━━━━━━━➣
+"""
+        await progress_message.edit_text(progress_text)
+
+    def format_bytes(self, size: int) -> str:
+        """Convert bytes to a human-readable format."""
+        if size < 1024:
+            return f"{size} B"
+        elif size < 1024 * 1024:
+            return f"{size / 1024:.2f} KB"
+        elif size < 1024 * 1024 * 1024:
+            return f"{size / (1024 * 1024):.2f} MB"
+        else:
+            return f"{size / (1024 * 1024 * 1024):.2f} GB"
 
     async def start_file_collection(self, client: Client, message: Message):
         user_id = message.from_user.id
@@ -158,14 +202,14 @@ class MergePlugin:
                     if file_data["type"] == "pdf":
                         file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                         merger.append(file_path)
-                        await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
+                        await self.show_progress_bar(progress_message, index, total_files, action="Merging")  # Update progress bar
                     elif file_data["type"] == "image":
                         img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
                         image = Image.open(img_path).convert("RGB")
                         img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                         image.save(img_pdf_path, "PDF")
                         merger.append(img_pdf_path)
-                        await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
+                        await self.show_progress_bar(progress_message, index, total_files, action="Merging")  # Update progress bar
 
                 merger.write(output_file)
                 merger.close()
@@ -177,12 +221,18 @@ class MergePlugin:
                         document=output_file,
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
+                        progress=lambda current, total: asyncio.create_task(
+                            self.show_progress_bar(progress_message, current, total, action="Uploading")
+                        ),
                     )
                 else:
                     await client.send_document(
                         chat_id=message.chat.id,
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
+                        progress=lambda current, total: asyncio.create_task(
+                            self.show_progress_bar(progress_message, current, total, action="Uploading")
+                        ),
                     )
 
                 # Send the sticker immediately after sending the PDF
@@ -202,6 +252,7 @@ class MergePlugin:
             self.user_file_metadata.pop(user_id, None)
             self.user_states.pop(user_id, None)
             self.pending_filename_requests.pop(user_id, None)
+            self.upload_start_time.pop(user_id, None)
 
     async def send_to_log_channel(self, client: Client, output_file: str, thumbnail_path: str, message: Message):
         try:
