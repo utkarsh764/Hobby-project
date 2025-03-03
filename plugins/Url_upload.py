@@ -36,11 +36,11 @@ async def start_download(client: Client, message: Message):
     # Create inline buttons for quality selection
     keyboard = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("240p", callback_data="quality_240")],
-            [InlineKeyboardButton("360p", callback_data="quality_360")],
-            [InlineKeyboardButton("480p", callback_data="quality_480")],
-            [InlineKeyboardButton("720p", callback_data="quality_720")],
-            [InlineKeyboardButton("Cancel", callback_data="cancel")]
+            [InlineKeyboardButton("240p", callback_data="quality_240")
+            InlineKeyboardButton("360p", callback_data="quality_360")],
+            [InlineKeyboardButton("480p", callback_data="quality_480")
+            InlineKeyboardButton("720p", callback_data="quality_720")],
+            [InlineKeyboardButton("✖️ Cancel ✖️", callback_data="cancel")]
         ]
     )
 
@@ -83,9 +83,11 @@ async def handle_callback(client: Client, callback_query: CallbackQuery):
         # Configure yt-dlp options
         output_template = f"downloads/{user_id}_video.mp4"
         ydl_opts = {
+            
             "format": f"bestvideo[height<={quality}]+bestaudio/best[height<={quality}]",
             "outtmpl": output_template,
             "progress_hooks": [lambda d: progress_hook(d, user_id, chat_id)],
+            "external_downloader": "pycryptodomex"  # Use pycryptodomex for decryption
         }
 
         try:
