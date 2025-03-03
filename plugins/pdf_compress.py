@@ -170,6 +170,6 @@ async def handle_compress_command(client: Client, message: Message):
 
 @Client.on_callback_query(filters.regex(r"^compress_(low|medium|high)$"))
 async def handle_compression_callback(client: Client, callback_query: CallbackQuery):
-    await compress_plugin.handle_compression_callback(client, callback_query
+    await compress_plugin.handle_compression_callback(client, callback_query)
 
                                                       
