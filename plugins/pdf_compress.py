@@ -4,7 +4,7 @@ import tempfile
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from pikepdf import Pdf, PdfImageCompression
+from pikepdf import Pdf
 from config import LOG_CHANNEL
 
 logger = logging.getLogger(__name__)
@@ -31,12 +31,12 @@ class CompressPlugin:
     async def compress_pdf(self, input_path: str, output_path: str, compression_level: str):
         """Compress a PDF using pikepdf."""
         compression_map = {
-            "low": PdfImageCompression.jpeg_low,
-            "medium": PdfImageCompression.jpeg_medium,
-            "high": PdfImageCompression.jpeg_high,
+            "low": {"compress_streams": True, "compress_images": True, "image_quality": 50},
+            "medium": {"compress_streams": True, "compress_images": True, "image_quality": 75},
+            "high": {"compress_streams": True, "compress_images": True, "image_quality": 90},
         }
         with Pdf.open(input_path) as pdf:
-            pdf.save(output_path, compress_streams=True, compression_level=compression_map[compression_level])
+            pdf.save(output_path, **compression_map[compression_level])
         logger.info(f"Compressed PDF saved to {output_path} with {compression_level} compression")
 
     async def estimate_compressed_size(self, input_path: str, compression_level: str) -> int:
@@ -171,5 +171,3 @@ async def handle_compress_command(client: Client, message: Message):
 @Client.on_callback_query(filters.regex(r"^compress_(low|medium|high)$"))
 async def handle_compression_callback(client: Client, callback_query: CallbackQuery):
     await compress_plugin.handle_compression_callback(client, callback_query)
-
-                                                      
