@@ -8,7 +8,7 @@ from yt_dlp import YoutubeDL
 user_data = {}
 
 # Command to start the process
-@app.on_message(filters.command("yl"))
+@Client.on_message(filters.command("yl"))
 async def start_download(client: Client, message: Message):
     # Check if the user provided a madxapi link and caption
     if len(message.command) < 2 or "-n" not in message.text:
@@ -36,7 +36,7 @@ async def start_download(client: Client, message: Message):
     }
 
 # Handle quality input
-@app.on_message(filters.text & ~filters.command("yl"))
+@Client.on_message(filters.text & ~filters.command("yl"))
 async def handle_quality(client: Client, message: Message):
     user_id = message.from_user.id
 
