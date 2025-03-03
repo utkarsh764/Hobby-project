@@ -128,6 +128,4 @@ async def handle_callback(client: Client, callback_query: CallbackQuery):
         # Clear user data after completion
         del user_data[user_id]
 
-# Start the bot
-print("Bot is running...")
-app.run()
+
