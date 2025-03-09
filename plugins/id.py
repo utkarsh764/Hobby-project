@@ -1,7 +1,8 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from filters import user_filter
 
-@Client.on_message(filters.command("id"))
+@Client.on_message(filters.command("id") & user_filter)
 async def id_command(client: Client, message: Message):
     """
     Handler for the /id command.
