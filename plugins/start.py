@@ -7,10 +7,10 @@ from helper.database import db
 import random
 from filters import user_filter
 
-LOG_TEXT = """#NewUser
-🪴 Nᴀᴍᴇ - {}
-🪪 ID - <code>{}</code>
-@Z900_Robot"""
+LOG_TEXT = """<blockquote><b>#NewUser</b></blockquote>
+<b>☃️ Nᴀᴍᴇ - {}</b>
+<b>🪪 ID </b>- <code>{}</code>
+<b>🤖 @Z900_Robot</b>"""
 
 @Client.on_message(filters.private & filters.command("start") & user_filter)
 async def start(client, message):
