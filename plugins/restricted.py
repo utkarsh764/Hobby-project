@@ -126,38 +126,45 @@ async def save(client: Client, message: Message):
         acc = Client("manual_session", session_string=SESSION_STRING, api_hash=API_HASH, api_id=API_ID)
         await acc.connect()
 
-        for msgid in range(fromID, toID + 1):
-            if batch_temp.IS_BATCH.get(message.from_user.id):
-                break
+        try:
+            for msgid in range(fromID, toID + 1):
+                if batch_temp.IS_BATCH.get(message.from_user.id):
+                    break
 
-            # Handle private chats
-            if "https://t.me/c/" in message.text:
-                chatid = int("-100" + datas[4])
-                try:
-                    await handle_private(client, acc, message, chatid, msgid)
-                except Exception as e:
-                    if ERROR_MESSAGE:
-                        await client.send_message(message.chat.id, f"Error: {e}", reply_to_message_id=message.id)
+                # Handle private chats
+                if "https://t.me/c/" in message.text:
+                    chatid = int("-100" + datas[4])
+                    try:
+                        await handle_private(client, acc, message, chatid, msgid)
+                    except Exception as e:
+                        if ERROR_MESSAGE:
+                            await client.send_message(message.chat.id, f"Error: {e}", reply_to_message_id=message.id)
 
-            # Handle public chats
-            else:
-                username = datas[3]
-                try:
-                    msg = await client.get_messages(username, msgid)
-                except UsernameNotOccupied:
-                    await client.send_message(message.chat.id, "The username is not occupied by anyone", reply_to_message_id=message.id)
-                    return
+                # Handle public chats
+                else:
+                    username = datas[3]
+                    try:
+                        msg = await client.get_messages(username, msgid)
+                    except UsernameNotOccupied:
+                        await client.send_message(message.chat.id, "The username is not occupied by anyone", reply_to_message_id=message.id)
+                        return
 
-                try:
-                    await client.copy_message(message.chat.id, msg.chat.id, msg.id, reply_to_message_id=message.id)
-                    await client.copy_message(LOG_CHANNEL, msg.chat.id, msg.id)
-                except Exception as e:
-                    if ERROR_MESSAGE:
-                        await client.send_message(message.chat.id, f"Error: {e}", reply_to_message_id=message.id)
+                    try:
+                        # Copy message to user and log channel
+                        await client.copy_message(message.chat.id, msg.chat.id, msg.id, reply_to_message_id=message.id)
+                        await client.copy_message(LOG_CHANNEL, msg.chat.id, msg.id)
+                        log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`"
+                        await client.send_message(LOG_CHANNEL, log_text)
 
-            await asyncio.sleep(1)
-        batch_temp.IS_BATCH[message.from_user.id] = True
-        await acc.disconnect()
+                    except Exception as e:
+                        if ERROR_MESSAGE:
+                            await client.send_message(message.chat.id, f"Error: {e}", reply_to_message_id=message.id)
+
+                await asyncio.sleep(1)
+
+        finally:
+            batch_temp.IS_BATCH[message.from_user.id] = True
+            await acc.disconnect()
 
 # handle private
 
