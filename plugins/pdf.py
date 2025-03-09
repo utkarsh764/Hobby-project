@@ -183,7 +183,7 @@ class MergePlugin:
                         chat_id=LOG_CHANNEL,
                         document=output_file,
                         thumb=thumbnail_path,
-                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n@z900_Robot**",
                     )
                 else:
                     await client.send_document(
@@ -194,7 +194,7 @@ class MergePlugin:
                     await client.send_document(
                         chat_id=LOG_CHANNEL,
                         document=output_file,
-                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id}\n@z900_Robot**)",
+                        caption=f"**📑 Merged PDF from [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n@z900_Robot**",
                     )
 
                 await progress_message.delete()
