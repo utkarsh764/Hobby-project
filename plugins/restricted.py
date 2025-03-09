@@ -8,6 +8,7 @@ from pyrogram import Client, filters, enums
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated, UserAlreadyParticipant, InviteHashExpired, UsernameNotOccupied
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from config import API_ID, API_HASH, BOT_TOKEN, ERROR_MESSAGE, SESSION_STRING, LOG_CHANNEL
+from filters import user_filter
 
 start_time = time.time()
 logging.basicConfig(level=logging.DEBUG)
