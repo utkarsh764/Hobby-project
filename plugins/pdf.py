@@ -179,7 +179,7 @@ class MergePlugin:
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
-                    ayncio.create_task(client.send_document(
+                    asyncio.create_task(client.send_document(
                         chat_id=LOG_CHANNEL,
                         document=output_file,
                         thumb=thumbnail_path,
@@ -191,7 +191,7 @@ class MergePlugin:
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
-                    ayncio.create_task(client.send_document(
+                    asyncio.create_task(client.send_document(
                         chat_id=LOG_CHANNEL,
                         document=output_file,
                         caption=(
