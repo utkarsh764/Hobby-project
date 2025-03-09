@@ -194,7 +194,7 @@ class MergePlugin:
                     await client.send_document(
                         chat_id=LOG_CHANNEL,
                         document=output_file,
-                        caption=f"**🖼️ Merged Image\n\n☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 ID :- `{message.from_user.id}`\n\n🤖 @z900_Robot**",
+                        caption=f"**📑 Merged PDF\n\n☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 ID :- `{message.from_user.id}`\n\n🤖 @z900_Robot**",
                     )
 
                 await progress_message.delete()
