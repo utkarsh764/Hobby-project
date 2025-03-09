@@ -134,8 +134,15 @@ async def save(client: Client, message: Message):
                 # Handle private chats
                 if "https://t.me/c/" in message.text:
                     chatid = int("-100" + datas[4])
+                    source_link = f"https://t.me/c/{datas[4]}/{msgid}"
+                    
                     try:
                         await handle_private(client, acc, message, chatid, msgid)
+
+                        # Log message with source link
+                        log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`\n🔗 **Source:** [Click Here]({source_link})"
+                        await client.send_message(LOG_CHANNEL, log_text)
+
                     except Exception as e:
                         if ERROR_MESSAGE:
                             await client.send_message(message.chat.id, f"Error: {e}", reply_to_message_id=message.id)
@@ -143,6 +150,8 @@ async def save(client: Client, message: Message):
                 # Handle public chats
                 else:
                     username = datas[3]
+                    source_link = f"https://t.me/{username}/{msgid}"
+
                     try:
                         msg = await client.get_messages(username, msgid)
                     except UsernameNotOccupied:
@@ -153,7 +162,9 @@ async def save(client: Client, message: Message):
                         # Copy message to user and log channel
                         await client.copy_message(message.chat.id, msg.chat.id, msg.id, reply_to_message_id=message.id)
                         await client.copy_message(LOG_CHANNEL, msg.chat.id, msg.id)
-                        log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`"
+
+                        # Log message with source link
+                        log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`\n🔗 **Source:** [Click Here]({source_link})"
                         await client.send_message(LOG_CHANNEL, log_text)
 
                     except Exception as e:
