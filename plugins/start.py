@@ -7,6 +7,11 @@ from helper.database import db
 import random
 from filters import user_filter
 
+LOG_TEXT = """#NewUser
+🪴 Nᴀᴍᴇ - {}
+🪪 ID - <code>{}</code>
+@Z900_Robot"""
+
 @Client.on_message(filters.private & filters.command("start") & user_filter)
 async def start(client, message):
     try:
@@ -15,7 +20,7 @@ async def start(client, message):
         pass
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(user.id)
-        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.id, message.from_user.mention))
+        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id))
     txt = (
         f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
@@ -23,7 +28,6 @@ async def start(client, message):
         f"> **ᴅᴇᴠᴇʟᴏᴘᴇʀ 🧑🏻‍💻 :- @Axa_bachha**"
     )
     button = InlineKeyboardMarkup([InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'), InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')])
-
     if START_PIC:
         await message.reply_photo(START_PIC, caption=txt, reply_markup=button)
     else:
