@@ -19,7 +19,7 @@ async def start(client, message):
         await db.add_user(user.id)
         await client.send_message(
             chat_id=LOG_CHANNEL,
-            caption=f"**> #NEWUSER: \n\n🪴 New User [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🤖 Started @Z900_Robot **!!",
+            caption=f"**#NEWUSER: \n\n🪴 New User [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🤖 Started @Z900_Robot **!!",
         )
         return
     txt = (
