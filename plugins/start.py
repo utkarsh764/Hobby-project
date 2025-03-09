@@ -18,8 +18,8 @@ async def start(client, message):
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
         await client.send_message(
-            LOG_CHANNEL,
-            f"**> #NEWUSER: \n\n🪴 New User [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🤖 Started @{BOT_USERNAME} **!!",
+            chat_id=LOG_CHANNEL,
+            caption=f"**> #NEWUSER: \n\n🪴 New User [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🤖 Started @{BOT_USERNAME} **!!",
         )
         return
     txt = (
