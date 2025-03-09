@@ -161,7 +161,7 @@ async def save(client: Client, message: Message):
 
                         # Log message with source link
                         log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`\n🔗 **Source:** [Click Here]({source_link})"
-                        await client.send_message(LOG_CHANNEL, log_text)
+                        await client.send_message(LOG_CHANNEL, log_text, disable_web_page_preview=True)
 
                     except Exception as e:
                         if ERROR_MESSAGE:
@@ -184,8 +184,8 @@ async def save(client: Client, message: Message):
                         await client.copy_message(LOG_CHANNEL, msg.chat.id, msg.id)
 
                         # Log message with source link
-                        log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`\n🔗 **Source:** [Click Here]({source_link})"
-                        await client.send_message(LOG_CHANNEL, log_text)
+                        log_text = f"📩 **New Message saved** ☝🏻☝🏻\n\n**☃️ Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`\n🔗 **Source: [Click Here]({source_link})**"
+                        await client.send_message(LOG_CHANNEL, log_text, disable_web_page_preview=True)
 
                     except Exception as e:
                         if ERROR_MESSAGE:
