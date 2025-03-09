@@ -20,8 +20,8 @@ class Database:
         await self.col.insert_one(user)
 
     async def is_user_exist(self, id):
-        user = await self.col.find_one({'_id': int(id)})
-        return bool(user)
+        user = await self.col.find_one({"id": int(id)})
+        return True if user else False
 
     async def total_users_count(self):
         count = await self.col.count_documents({})
