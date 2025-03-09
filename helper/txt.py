@@ -10,14 +10,16 @@ class mr(object):
     ABOUT_TXT = """
 <b>
 ╭───────────⍟
-├🤖 𝙼𝚢 𝙽𝚊𝚖𝚎 : {}
-├👑 𝙾𝚆𝙽𝙴𝚁 : <a href=https://t.me/axa_bachha>𝐻𝑜𝑚𝑜 𝑠𝑎𝑝𝑖𝑒𝑛『❅』</a> 
-├📕 𝙻𝙸𝙱𝚁𝙰𝚁𝚈 : <a href=https://github.com/pyrogram>𝐏𝐲𝐫𝐨𝐠𝐫𝐚𝐦</a>
-├✏️ 𝙻𝙰𝙽𝙶𝚄𝙰𝙶𝙴 : <a href=https://www.python.org>𝐏𝐲𝐭𝐡𝐨𝐧 3</a>
-├💾 𝙳𝙰𝚃𝙰𝙱𝙰𝚂𝙴 : <a href=https://cloud.mongodb.com>𝐌𝐨𝐧𝐠𝐨𝐃𝐁</a>
-├🌀 𝙼𝚈 𝚂𝙴𝚁𝚅𝙴𝚁 : <a href=https://apps.koyeb.com>𝐊𝐨𝐲𝐞𝐛</a>
-├📊 𝙱𝚄𝙸𝙻𝙳-𝚂𝚃𝙰𝚃𝚄𝚂 : 𝐏𝐲𝐭𝐡𝐨𝐧 𝐯𝟑.𝟔.𝟖               
+├➢ ᴍʏꜱᴇʟꜰ : {}
+├➢ ᴏᴡɴᴇʀ : <a href=https://t.me/axa_bachha>𝐻𝑜𝑚𝑜 𝑠𝑎𝑝𝑖𝑒𝑛『❅』</a> 
+├➢ ʟɪʙʀᴀʀʏ : <a href=https://github.com/pyrogram>ᴘʏʀᴏɢʀᴀᴍ</a>
+├➢ ʟᴀɴɢᴜᴀɢᴇ : <a href=https://www.python.org>ᴘʏᴛʜᴏɴ 3</a>
+├➢ ᴅᴀᴛᴀʙᴀꜱᴇ : <a href=https://cloud.mongodb.com>MᴏɴɢᴏDB</a>
+├➢ ꜱᴇʀᴠᴇʀ : <a href=https://apps.koyeb.com>ᴋᴏʏᴇʙ</a>
+├➢ ʙᴜɪʟᴅ ꜱᴛᴀᴛᴜꜱ  : ᴘʏᴛʜᴏɴ v3.6.8              
 ╰───────────────⍟
+
+➢ ɴᴏᴛᴇ :- ᴘʟᴢ ᴅᴏɴ'ᴛ ᴀꜱᴋ ꜰᴏʀ ʀᴇᴘᴏ 🤡
 </b>
 """
 
