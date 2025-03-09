@@ -185,7 +185,8 @@ class MergePlugin:
                         thumb=thumbnail_path,
                         caption=(
                             f">**📑 Merged PDF**\n"
-                            f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 ID :- `{message.from_user.id}`**"
+                            f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
+                            f">**🪪 ID :- `{message.from_user.id}`**"
                     )))
                 else:
                     await client.send_document(
@@ -198,7 +199,8 @@ class MergePlugin:
                         document=output_file,
                         caption=(
                             f">**📑 Merged PDF**\n"
-                            f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 ID :- `{message.from_user.id}`**"
+                            f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
+                            f">**🪪 ID :- `{message.from_user.id}`**"
                     )))
 
                 await progress_message.delete()
