@@ -7,10 +7,10 @@ from helper.database import db
 import random
 from filters import user_filter
 
-LOG_TEXT = """<blockquote><b>#NewUser</b></blockquote>
-<b>☃️ Nᴀᴍᴇ - {}</b>
-<b>🪪 ID </b>- <code>{}</code>
-<b>🤖 @Z900_Robot</b>"""
+LOG_TEXT = """<blockquote><b>#NewUser || @z900_Robot</b></blockquote>
+<blockquote><b>☃️ Nᴀᴍᴇ :~ {}
+🪪 ID :~ <code>{}</code>
+👨‍👨‍👦‍👦 ᴛᴏᴛᴀʟ :~ {}</b></blockquote>"""
 
 @Client.on_message(filters.private & filters.command("start") & user_filter)
 async def start(client, message):
@@ -20,14 +20,17 @@ async def start(client, message):
         pass
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id)
-        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id))
+        total_users = await db.total_users_count()
+        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
     txt = (
-        f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
+        f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
         f"**🔘 ᴄʟɪᴄᴋ ᴏɴ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**\n\n"
         f"> **ᴅᴇᴠᴇʟᴏᴘᴇʀ 🧑🏻‍💻 :- @Axa_bachha**"
     )
-    button = InlineKeyboardMarkup([InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'), InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')])
+    button = InlineKeyboardMarkup([
+        [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'), InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
+    ])
     if START_PIC:
         await message.reply_photo(START_PIC, caption=txt, reply_markup=button)
     else:
