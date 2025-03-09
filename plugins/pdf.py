@@ -13,7 +13,7 @@ from filters import user_filter
 
 logger = logging.getLogger(__name__)
 
-MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
+MAX_FILE_SIZE = 500 * 1024 * 1024  # 20MB
 
 class MergePlugin:
     def __init__(self):
