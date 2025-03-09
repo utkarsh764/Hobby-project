@@ -9,6 +9,7 @@ from pyrogram import Client, filters
 from PyPDF2 import PdfMerger
 from pyrogram.types import Message
 from config import LOG_CHANNEL
+from filters import user_filter
 
 logger = logging.getLogger(__name__)
 
@@ -217,7 +218,7 @@ class MergePlugin:
 merge_plugin = MergePlugin()
 
 # Register handlers
-@Client.on_message(filters.command(["merge"]))
+@Client.on_message(filters.command(["merge"]) & user_filter)
 async def start_file_collection(client: Client, message: Message):
     await merge_plugin.start_file_collection(client, message)
 
@@ -233,7 +234,7 @@ async def handle_image_metadata(client: Client, message: Message):
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "collecting_files":
         await merge_plugin.handle_image_metadata(client, message)
 
-@Client.on_message(filters.command(["done"]))
+@Client.on_message(filters.command(["done"]) & user_filter)
 async def merge_files(client: Client, message: Message):
     await merge_plugin.merge_files(client, message)
 
