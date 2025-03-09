@@ -7,21 +7,25 @@ from helper.database import db
 import random
 from filters import user_filter
 
-# Original Start Command
 @Client.on_message(filters.private & filters.command("start") & user_filter)
 async def start(client, message):
+    print("Start command received")  # Debug log
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
-    except:
-        pass
+    except Exception as e:
+        print(f"Error in message.react: {e}")  # Debug log
+
     user = message.from_user
     if not await db.is_user_exist(user.id):
+        print("New user detected, adding to database...")  # Debug log
         await db.add_user(user.id)
+        print("Sending log message to channel...")  # Debug log
         await client.send_message(
             chat_id=LOG_CHANNEL,
-            caption=f"**#NEWUSER: \n\n🪴 New User [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🤖 Started @Z900_Robot **!!",
+            caption=f"**#NEWUSER: \n\n🪴 Name :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 User id :- `{message.from_user.id}`\n Started @Z900_Robot **!!",
         )
         return
+
     txt = (
         f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
