@@ -102,7 +102,7 @@ async def progress(current, total, message, type):
             try:
                 await message.edit_text(
                     f"**🚀 {type.capitalize()} Progress**\n\n"
-                    f"**{progress_bar}**\n"
+                    f"**[{progress_bar}]**\n"
                     f"**📈 Progress**: {percent:.1f}%\n"
                     f"**📦 Processed**: {processed:.2f}MB / {total_size:.2f}MB\n"
                     f"**⚡ Speed**: {speed:.2f} MB/s\n"
