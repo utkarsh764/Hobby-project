@@ -1,7 +1,7 @@
 from asyncio import sleep
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, Message, BotCommand
-from config import START_PIC, ADMIN, REACTIONS
+from config import START_PIC, ADMIN, REACTIONS, LOG_CHANNEL
 from helper.txt import mr
 from helper.database import db
 import random
@@ -17,7 +17,11 @@ async def start(client, message):
     user = message.from_user
     if not await db.is_user_exist(user.id):
         await db.add_user(user.id)
-
+        await client.send_message(
+            LOG_CHANNEL,
+            f"**> #NEWUSER: \n\n🪴 New User [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🤖 Started @{BOT_USERNAME} **!!",
+        )
+        return
     txt = (
         f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
