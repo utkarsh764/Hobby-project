@@ -7,7 +7,7 @@ from helper.database import db
 import random
 from filters import user_filter
 
-LOG_TEXT = """<blockquote><b>#NewUser || @z900_Robot</b></blockquote>
+LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 <blockquote><b>☃️ Nᴀᴍᴇ :~ {}
 🪪 ID :~ <code>{}</code>
 👨‍👨‍👦‍👦 ᴛᴏᴛᴀʟ :~ {}</b></blockquote>"""
@@ -58,10 +58,12 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
     if data == "start":
         txt = (
-            f"> **✨👋🏻 Hey {query.from_user.mention} !!**\n\n"
-            f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ ᴇꜰꜰᴏʀᴛʟᴇꜱꜱʟʏ.**\n\n"
-            f"**🔘 Usᴇ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**"
+            f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
+            f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
+            f"**🔘 ᴄʟɪᴄᴋ ᴏɴ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ʟᴇᴀʀɴ ᴍᴏʀᴇ ᴀʙᴏᴜᴛ ᴍʏ ғᴜɴᴄᴛɪᴏɴs!**\n\n"
+            f"> **ᴅᴇᴠᴇʟᴏᴘᴇʀ 🧑🏻‍💻 :- @Axa_bachha**"
         )
+        
         reply_markup = InlineKeyboardMarkup([
             [InlineKeyboardButton("🤖 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url='https://t.me/axa_bachha')],
             [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'),
