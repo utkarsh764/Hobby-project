@@ -19,7 +19,7 @@ async def start(client, message):
     except:
         pass
     if not await db.is_user_exist(message.from_user.id):
-        await db.add_user(user.id)
+        await db.add_user(message.from_user.id)
         await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id))
     txt = (
         f"> **✨👋🏻 Hey {user.mention} !!**\n\n"
