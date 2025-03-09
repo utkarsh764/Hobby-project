@@ -48,5 +48,19 @@ class Database:
         user = await self.col.find_one({'_id': int(id)})
         return user.get('caption', None)
 
+    # Store the broadcast message ID
+    async def add_broadcast_message(self, user_id, message_id):
+        await self.users.update_one(
+            {"_id": user_id}, {"$set": {"last_broadcast_msg": message_id}}, upsert=True
+        )
+        
+    # Retrieve the last broadcast message ID
+    async def get_broadcast_message(self, user_id):
+        user = await self.users.find_one({"_id": user_id})
+        return user.get("last_broadcast_msg") if user else None
+
+    # Delete the stored broadcast message ID
+    async def delete_broadcast_message(self, user_id):
+        await self.users.update_one({"_id": user_id}, {"$unset": {"last_broadcast_msg": ""}})
 
 db = Database(DB_URL, DB_NAME)
