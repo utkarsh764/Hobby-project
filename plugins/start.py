@@ -5,13 +5,10 @@ from config import START_PIC, ADMIN, REACTIONS
 from helper.txt import mr
 from helper.database import db
 import random
-
-# Filter to ignore messages from bots
-def user_only(_, __, message):
-    return not message.from_user.is_bot if message.from_user else False
+from filters import user_filter
 
 # Original Start Command
-@Client.on_message(filters.private & filters.command("start") & filters.create(user_only))
+@Client.on_message(filters.private & filters.command("start") & user_filter)
 async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
