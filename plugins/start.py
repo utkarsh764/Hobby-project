@@ -20,7 +20,7 @@ async def start(client, message):
         print("New user detected, adding to database...")  # Debug log
         await db.add_user(user.id)
         print("Sending log message to channel...")  # Debug log
-        await client.send_message(
+        await Client.send_message(
             chat_id=LOG_CHANNEL,
             caption=f"**#NEWUSER: \n\n🪴 Name :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 User id :- `{message.from_user.id}`\n Started @Z900_Robot **!!",
         )
