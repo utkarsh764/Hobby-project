@@ -179,7 +179,7 @@ class MergePlugin:
                         thumb=thumbnail_path,  # Set the thumbnail
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
-                    await client.send_document(
+                    ayncio.create_task(client.send_document(
                         chat_id=LOG_CHANNEL,
                         document=output_file,
                         thumb=thumbnail_path,
@@ -191,7 +191,7 @@ class MergePlugin:
                         document=output_file,
                         caption="**🎉 Here is your merged PDF 📄.**",
                     )
-                    await client.send_document(
+                    ayncio.create_task(client.send_document(
                         chat_id=LOG_CHANNEL,
                         document=output_file,
                         caption=f"**📑 Merged PDF\n\n☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})\n🪪 ID :- `{message.from_user.id}`\n\n🤖 @z900_Robot**",
