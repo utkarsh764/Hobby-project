@@ -13,7 +13,7 @@ from filters import user_filter
 
 logger = logging.getLogger(__name__)
 
-MAX_FILE_SIZE = 500 * 1024 * 1024  # 20MB
+MAX_FILE_SIZE = 350 * 1024 * 1024  # 350MB
 
 class MergePlugin:
     def __init__(self):
@@ -63,7 +63,7 @@ class MergePlugin:
             return
 
         if message.document.file_size > MAX_FILE_SIZE:
-            await message.reply_text("🚫 File size is too large! Please send a file under 20MB.")
+            await message.reply_text("🚫 File size is too large! Please send a file under 350MB.")
             return
 
         self.user_file_metadata[user_id].append(
