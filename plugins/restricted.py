@@ -66,27 +66,48 @@ async def progress(current, total, message, type):
         # Calculate the download/upload speed in MB/s
         speed = current / elapsed_time / (1024 * 1024) if elapsed_time > 0 else 0
 
+        # Calculate estimated time remaining (ETA)
+        if speed > 0:
+            remaining_bytes = total - current
+            eta_seconds = remaining_bytes / (speed * 1024 * 1024)
+            hours, remainder = divmod(int(eta_seconds), 3600)
+            minutes, seconds = divmod(remainder, 60)
+            eta_formatted = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
+        else:
+            eta_formatted = "Calculating..."
+
         # Format the elapsed time in a readable format (hours, minutes, seconds)
         hours, remainder = divmod(int(elapsed_time), 3600)
         minutes, seconds = divmod(remainder, 60)
-        formatted_time = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
-        
+        elapsed_formatted = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
+
+        # Create a progress bar
+        progress_bar_length = 10  # Length of the progress bar
+        filled_length = int(progress_bar_length * percent / 100)
+        progress_bar = "▰" * filled_length + "▱" * (progress_bar_length - filled_length)
+
         # Update progress message in file
         with open(f'{message.id}{type}status.txt', "w") as fileup:
-            fileup.write(f"**📈 Progress**: {percent:.1f}%\n"
-                         f"**📦 Processed**: {processed:.2f}MB/{total_size:.2f}MB\n"
-                         f"**⚡ Speed**: {speed:.2f} MB/s\n"
-                         f"**⏱️ Time Elapsed**: {formatted_time}\n")
-        
+            fileup.write(
+                f"**{progress_bar}**\n"
+                f"**📈 Progress**: {percent:.1f}%\n"
+                f"**📦 Processed**: {processed:.2f}MB / {total_size:.2f}MB\n"
+                f"**⚡ Speed**: {speed:.2f} MB/s\n"
+                f"**⏱️ Elapsed Time**: {elapsed_formatted}\n"
+                f"**⏳ ETA**: {eta_formatted}"
+            )
+
         # Update the message with the progress
         if percent % 5 == 0:  # Update every 5% for smoother experience
             try:
                 await message.edit_text(
-                    f"**🚀 Task Progress:**\n"
-                    f"📈 Progress: {percent:.1f}%\n"
-                    f"📦 Processed: {processed:.2f}MB of {total_size:.2f}MB\n"
-                    f"⚡ Speed: {speed:.2f} MB/s\n"
-                    f"⏱️ Time Elapsed: {formatted_time}"
+                    f"**🚀 {type.capitalize()} Progress**\n\n"
+                    f"**{progress_bar}**\n"
+                    f"**📈 Progress**: {percent:.1f}%\n"
+                    f"**📦 Processed**: {processed:.2f}MB / {total_size:.2f}MB\n"
+                    f"**⚡ Speed**: {speed:.2f} MB/s\n"
+                    f"**⏱️ Elapsed Time**: {elapsed_formatted}\n"
+                    f"**⏳ ETA**: {eta_formatted}"
                 )
             except Exception as e:
                 # In case of any errors, log them
@@ -94,7 +115,6 @@ async def progress(current, total, message, type):
         
     except Exception as e:
         logger.error(f"Error in progress function: {e}")
-
 #————————————————————————————————————————————————————————————————————————————————————————————
 
 @Client.on_message(filters.command(["cancel"]))
