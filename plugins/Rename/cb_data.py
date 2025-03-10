@@ -19,8 +19,7 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 async def cancel(bot, update):
     try:
         await update.message.delete()
-    except Exception as e:
-        logger.error(f"Cancel Error: {e}")
+    except:
         return
 
 @Client.on_callback_query(filters.regex("upload"))
@@ -31,6 +30,7 @@ async def doc(bot, update):
         new_filename = new_name.split(":-")[1].strip()
         file = update.message.reply_to_message
         file_path = f"downloads/{new_filename}"
+
         ms = await update.message.edit("⚠️ __Downloading file to my server...__")
         c_time = time.time()
 
@@ -38,7 +38,8 @@ async def doc(bot, update):
             path = await bot.download_media(
                 message=file,
                 progress=progress_for_pyrogram,
-                progress_args=("**⚠️ Please wait processing**", ms, c_time))
+                progress_args=("**⚠️ Please wait processing**", ms, c_time)
+            )
         except Exception as e:
             await ms.edit(f"❌ Download Error: {e}")
             return
@@ -52,8 +53,8 @@ async def doc(bot, update):
             metadata = extractMetadata(createParser(file_path))
             if metadata and metadata.has("duration"):
                 duration = metadata.get('duration').seconds
-        except Exception as e:
-            logger.error(f"Metadata Error: {e}")
+        except:
+            pass
 
         user = update.from_user
         c_caption = await db.get_caption(user.id)
@@ -80,15 +81,20 @@ async def doc(bot, update):
         ph_path = None
         try:
             if c_thumb:
+                logger.info(f"Fetching thumbnail from database for user {user.id}: {c_thumb}")
                 ph_path = await bot.download_media(c_thumb)
             elif media and hasattr(media, "thumbs") and media.thumbs:
+                logger.info(f"Fetching thumbnail from media file for user {user.id}")
                 ph_path = await bot.download_media(media.thumbs[0].file_id)
 
             if ph_path:
+                logger.info(f"Thumbnail downloaded successfully: {ph_path}")
                 Image.open(ph_path).convert("RGB").save(ph_path)
                 img = Image.open(ph_path)
                 img.resize((320, 320))
                 img.save(ph_path, "JPEG")
+            else:
+                logger.warning("No valid thumbnail found.")
         except Exception as e:
             logger.error(f"Thumbnail Error: {e}")
             ph_path = None
@@ -107,19 +113,16 @@ async def doc(bot, update):
             await ms.edit("❌ Unknown file type. Cannot upload.")
             return
 
-        # Prepare upload parameters
-        upload_params = {
-            "chat_id": user.id,
-            type: file_path,
-            "caption": caption,
-        }
-        if type in ["video", "audio"]:
-            upload_params["thumb"] = ph_path
-            upload_params["duration"] = duration
-
-        # Send file to user
+        # Send to user
         try:
-            await send_func(**upload_params, progress=progress_for_pyrogram, progress_args=("⚠️ Uploading file...", ms, c_time))
+            await send_func(
+                chat_id=user.id,
+                **{type: file_path},
+                caption=caption,
+                thumb=ph_path if type in ["video", "audio"] else None,
+                progress=progress_for_pyrogram,
+                progress_args=("⚠️ Uploading file...", ms, c_time)
+            )
             logger.info(f"File {new_filename} sent to user {user.id}")
         except Exception as e:
             await ms.edit(f"❌ Upload Error: {e}")
@@ -133,11 +136,13 @@ async def doc(bot, update):
             f"📄 **Filename:** `{new_filename}`\n"
             f"📦 **Size:** {filesize}"
         )
-        upload_params["chat_id"] = LOG_CHANNEL
-        upload_params["caption"] = log_caption
-
         try:
-            await send_func(**upload_params)
+            await send_func(
+                chat_id=LOG_CHANNEL,
+                **{type: file_path},
+                caption=log_caption,
+                thumb=ph_path if type in ["video", "audio"] else None
+            )
             logger.info(f"File {new_filename} logged in LOG_CHANNEL")
         except Exception as e:
             logger.error(f"Log Channel Upload Error: {e}")
