@@ -77,7 +77,8 @@ async def doc(bot, update):
 
         # Download thumbnail
         ph_path = None
-        if file.thumbs or c_thumb:
+        media = getattr(file, file.media.value, None) # Extract the correct media object	    
+        if (media and hasattr(media, "thumbs") and media.thumbs) or c_thumb:
             try:
                 ph_path = await bot.download_media(c_thumb if c_thumb else file.thumbs[0].file_id)
                 Image.open(ph_path).convert("RGB").save(ph_path)
