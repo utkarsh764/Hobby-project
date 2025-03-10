@@ -4,7 +4,7 @@ import asyncio
 
 
 # ✅ Store Channel When /code is Sent
-@Client.on_message(filters.command("add") & filters.groups)
+@Client.on_message(filters.command("add") & filters.channel)
 async def add_channel(client, message):
     channel_id = message.chat.id
     added = await db.add_channel(channel_id)
@@ -16,7 +16,7 @@ async def add_channel(client, message):
 
 
 # ❌ Remove Channel When /rem is Sent
-@Client.on_message(filters.command("rem") & filters.groups)
+@Client.on_message(filters.command("rem") & filters.channel)
 async def remove_channel(client, message):
     channel_id = message.chat.id
     exists = await db.is_channel_exist(channel_id)
@@ -29,7 +29,7 @@ async def remove_channel(client, message):
 
 
 # 🔄 Format Messages in Stored Channels
-@Client.on_message(filters.group)
+@Client.on_message(filters.channel)
 async def format_channel_messages(client, message):
     channel_id = message.chat.id
     is_registered = await db.is_channel_exist(channel_id)
