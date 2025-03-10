@@ -30,7 +30,7 @@ async def doc(bot, update):
         new_filename = new_name.split(":-")[1].strip()
         file = update.message.reply_to_message
         file_path = f"downloads/{new_filename}"
-        ms = await update.message.edit("⚠️__**Please wait...**__\n__Downloading file to my server...__")
+        ms = await update.message.edit("⚠️ __Downloading file to my server...__")
         c_time = time.time()
         
         try:
@@ -39,82 +39,112 @@ async def doc(bot, update):
                 progress=progress_for_pyrogram,
                 progress_args=("**⚠️ Please wait processing**", ms, c_time))
         except Exception as e:
-            await ms.edit(str(e))
+            await ms.edit(f"❌ Download Error: {e}")
             return
         
         os.rename(path, file_path)
+        logger.info(f"File downloaded and renamed to {file_path}")
 
+        # Extract metadata
         duration = 0
         try:
             metadata = extractMetadata(createParser(file_path))
-            if metadata.has("duration"):
+            if metadata and metadata.has("duration"):
                 duration = metadata.get('duration').seconds
         except:
             pass
 
         user = update.from_user
-        c_caption = await db.get_caption(update.message.chat.id)
-        c_thumb = await db.get_thumbnail(update.message.chat.id)
+        c_caption = await db.get_caption(user.id)
+        c_thumb = await db.get_thumbnail(user.id)
 
+        # Extract file size safely
+        try:
+            media = getattr(file, file.media.value, None)
+            filesize = humanize.naturalsize(media.file_size) if media and media.file_size else "Unknown Size"
+        except AttributeError:
+            filesize = "Unknown Size"
+
+        # Prepare caption
         if c_caption:
             try:
-                caption = c_caption.format(filename=new_filename, filesize=humanize.naturalsize(file.file_size), duration=convert(duration))
+                caption = c_caption.format(filename=new_filename, filesize=filesize, duration=convert(duration))
             except Exception as e:
-                await ms.edit(text=f"Your caption Error unexpected keyword ●> ({e})")
+                await ms.edit(f"❌ Caption Error: {e}")
                 return
         else:
-            caption = f"**{new_filename}**"
+            caption = f"📂 **{new_filename}**"
 
+        # Download thumbnail
         ph_path = None
         if file.thumbs or c_thumb:
-            ph_path = await bot.download_media(c_thumb if c_thumb else file.thumbs[0].file_id)
-            Image.open(ph_path).convert("RGB").save(ph_path)
-            img = Image.open(ph_path)
-            img.resize((320, 320))
-            img.save(ph_path, "JPEG")
+            try:
+                ph_path = await bot.download_media(c_thumb if c_thumb else file.thumbs[0].file_id)
+                Image.open(ph_path).convert("RGB").save(ph_path)
+                img = Image.open(ph_path)
+                img.resize((320, 320))
+                img.save(ph_path, "JPEG")
+            except Exception as e:
+                logger.error(f"Thumbnail Error: {e}")
+                ph_path = None
 
-        await ms.edit("⚠️__**Please wait...**__\n\n__Processing file upload....__")
+        await ms.edit("⚠️ __Processing file upload...__")
         c_time = time.time()
 
+        # Send function mapping
         send_func = {
             "document": bot.send_document,
             "video": bot.send_video,
             "audio": bot.send_audio
-        }.get(type)
+        }.get(type, None)
 
-        if send_func:
+        if send_func is None:
+            await ms.edit("❌ Unknown file type. Cannot upload.")
+            return
+
+        # Send to user
+        try:
             await send_func(
-                update.message.chat.id,
+                chat_id=user.id,
                 **{type: file_path},
                 caption=caption,
-                thumb=ph_path,
+                thumb=ph_path if type in ["video", "audio"] else None,
                 duration=duration if type in ["video", "audio"] else None,
                 progress=progress_for_pyrogram,
-                progress_args=("⚠️__**Please wait...**__", ms, c_time)
+                progress_args=("⚠️ Uploading file...", ms, c_time)
             )
+            logger.info(f"File {new_filename} sent to user {user.id}")
+        except Exception as e:
+            await ms.edit(f"❌ Upload Error: {e}")
+            return
 
-            # Send copy to log channel
-            log_caption = (
-                f"📩 **New File Saved** ☝🏻☝🏻\n\n"
-                f"**☃️ Nᴀᴍᴇ:** {user.mention}\n"
-                f"👤 **User ID:** `{user.id}`\n"
-                f"📄 **Filename:** `{new_filename}`\n"
-                f"📦 **Size:** {humanize.naturalsize(file.file_size)}"
-            )
+        # Send log to LOG_CHANNEL
+        log_caption = (
+            f"📩 **New File Saved** ☝🏻☝🏻\n\n"
+            f"**☃️ Nᴀᴍᴇ:** {user.mention}\n"
+            f"👤 **User ID:** `{user.id}`\n"
+            f"📄 **Filename:** `{new_filename}`\n"
+            f"📦 **Size:** {filesize}"
+        )
+        try:
             await send_func(
-                LOG_CHANNEL,
+                chat_id=LOG_CHANNEL,
                 **{type: file_path},
                 caption=log_caption,
-                thumb=ph_path,
+                thumb=ph_path if type in ["video", "audio"] else None,
                 duration=duration if type in ["video", "audio"] else None
             )
+            logger.info(f"File {new_filename} logged in LOG_CHANNEL")
+        except Exception as e:
+            logger.error(f"Log Channel Upload Error: {e}")
 
+        # Cleanup
         await ms.delete()
         os.remove(file_path)
         if ph_path:
             os.remove(ph_path)
 
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error(f"Unexpected Error: {e}")
 
 	    
