@@ -103,7 +103,7 @@ async def doc(bot, update):
         msg = await send_func[type](**send_kwargs)  # Send file to user
 
         # Log message in the channel
-        log_text = f"📂 **New Upload**\n👤 User: `{user_id}`\n📄 Filename: `{new_filename}`\n📏 Size: {filesize}"
+        log_text = f"📂 **New File Renamed** ☝🏻☝🏻\n\n**🧑🏻‍🎤 Nᴀᴍᴇ: {message.from_user.mention}**\n👤 **User ID:** `{message.from_user.id}`"
         await msg.copy(LOG_CHANNEL, caption=log_text)
 
         await ms.delete()
