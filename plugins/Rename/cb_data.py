@@ -1,25 +1,26 @@
-
 from plugins.Rename.utils import progress_for_pyrogram, convert, humanbytes
 from pyrogram import Client, filters
 from plugins.Rename.filedetect import refunc
-from pyrogram.types import (  InlineKeyboardButton, InlineKeyboardMarkup,ForceReply)
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from helper.database import db
-import os 
+import os
 import humanize
 from PIL import Image
 import time
 import logging
 from config import LOG_CHANNEL
+
 logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 @Client.on_callback_query(filters.regex('cancel'))
-async def cancel(bot,update):
+async def cancel(bot, update):
     try:
         await update.message.delete()
-    except:
+    except Exception as e:
+        logger.error(f"Cancel Error: {e}")
         return
 
 @Client.on_callback_query(filters.regex("upload"))
@@ -32,7 +33,7 @@ async def doc(bot, update):
         file_path = f"downloads/{new_filename}"
         ms = await update.message.edit("⚠️ __Downloading file to my server...__")
         c_time = time.time()
-        
+
         try:
             path = await bot.download_media(
                 message=file,
@@ -41,7 +42,7 @@ async def doc(bot, update):
         except Exception as e:
             await ms.edit(f"❌ Download Error: {e}")
             return
-        
+
         os.rename(path, file_path)
         logger.info(f"File downloaded and renamed to {file_path}")
 
@@ -51,8 +52,8 @@ async def doc(bot, update):
             metadata = extractMetadata(createParser(file_path))
             if metadata and metadata.has("duration"):
                 duration = metadata.get('duration').seconds
-        except:
-            pass
+        except Exception as e:
+            logger.error(f"Metadata Error: {e}")
 
         user = update.from_user
         c_caption = await db.get_caption(user.id)
@@ -75,19 +76,22 @@ async def doc(bot, update):
         else:
             caption = f"📂 **{new_filename}**"
 
-        # Download thumbnail
+        # Download and process thumbnail
         ph_path = None
-        media = getattr(file, file.media.value, None) # Extract the correct media object	    
-        if (media and hasattr(media, "thumbs") and media.thumbs) or c_thumb:
-            try:
-                ph_path = await bot.download_media(c_thumb if c_thumb else file.thumbs[0].file_id)
+        try:
+            if c_thumb:
+                ph_path = await bot.download_media(c_thumb)
+            elif media and hasattr(media, "thumbs") and media.thumbs:
+                ph_path = await bot.download_media(media.thumbs[0].file_id)
+
+            if ph_path:
                 Image.open(ph_path).convert("RGB").save(ph_path)
                 img = Image.open(ph_path)
                 img.resize((320, 320))
                 img.save(ph_path, "JPEG")
-            except Exception as e:
-                logger.error(f"Thumbnail Error: {e}")
-                ph_path = None
+        except Exception as e:
+            logger.error(f"Thumbnail Error: {e}")
+            ph_path = None
 
         await ms.edit("⚠️ __Processing file upload...__")
         c_time = time.time()
@@ -103,17 +107,19 @@ async def doc(bot, update):
             await ms.edit("❌ Unknown file type. Cannot upload.")
             return
 
-        # Send to user
+        # Prepare upload parameters
+        upload_params = {
+            "chat_id": user.id,
+            type: file_path,
+            "caption": caption,
+        }
+        if type in ["video", "audio"]:
+            upload_params["thumb"] = ph_path
+            upload_params["duration"] = duration
+
+        # Send file to user
         try:
-            await send_func(
-                chat_id=user.id,
-                **{type: file_path},
-                caption=caption,
-                thumb=ph_path if type in ["video", "audio"] else None,
-                duration=duration if type in ["video", "audio"] else None,
-                progress=progress_for_pyrogram,
-                progress_args=("⚠️ Uploading file...", ms, c_time)
-            )
+            await send_func(**upload_params, progress=progress_for_pyrogram, progress_args=("⚠️ Uploading file...", ms, c_time))
             logger.info(f"File {new_filename} sent to user {user.id}")
         except Exception as e:
             await ms.edit(f"❌ Upload Error: {e}")
@@ -127,14 +133,11 @@ async def doc(bot, update):
             f"📄 **Filename:** `{new_filename}`\n"
             f"📦 **Size:** {filesize}"
         )
+        upload_params["chat_id"] = LOG_CHANNEL
+        upload_params["caption"] = log_caption
+
         try:
-            await send_func(
-                chat_id=LOG_CHANNEL,
-                **{type: file_path},
-                caption=log_caption,
-                thumb=ph_path if type in ["video", "audio"] else None,
-                duration=duration if type in ["video", "audio"] else None
-            )
+            await send_func(**upload_params)
             logger.info(f"File {new_filename} logged in LOG_CHANNEL")
         except Exception as e:
             logger.error(f"Log Channel Upload Error: {e}")
