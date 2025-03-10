@@ -56,9 +56,9 @@ async def doc(bot, update):
         except:
             pass
 
-        user = update.from_user
-        c_caption = await db.get_caption(user.id)
-        c_thumb = await db.get_thumbnail(user.id)
+        user_id = update.message.chat.id
+        c_caption = await db.get_caption(user_id)
+        c_thumb = await db.get_thumbnail(user_id)
 
         # Extract file size safely
         try:
@@ -130,7 +130,7 @@ async def doc(bot, update):
 
         # Send log to LOG_CHANNEL
         log_caption = (
-            f"📩 **New File Saved** ☝🏻☝🏻\n\n"
+            f"📩 **New File Renamed** ☝🏻☝🏻\n\n"
             f"**☃️ Nᴀᴍᴇ:** {user.mention}\n"
             f"👤 **User ID:** `{user.id}`\n"
             f"📄 **Filename:** `{new_filename}`\n"
