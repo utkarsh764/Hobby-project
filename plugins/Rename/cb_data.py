@@ -12,6 +12,7 @@ import humanize
 from PIL import Image
 import time
 import logging
+from config import LOG_CHANNEL
 logger = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
