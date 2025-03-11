@@ -34,5 +34,5 @@ FORCE_SUB_CHANNEL4 = int(os.environ.get("FORCE_SUB_CHANNEL4", "0"))#put 0 to dis
 FORCE_PIC = os.environ.get("FORCE_PIC", "https://telegra.ph/file/e292b12890b8b4b9dcbd1.jpg")
 FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "<b>ʜᴇʟʟᴏ ᴜꜱᴇʀ 👋🏻\nᴊᴏɪɴ ᴏᴜʀ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴄʟɪᴄᴋ ʀᴇʟᴏᴀᴅ ᴛᴏ ᴀᴄᴄᴇꜱꜱ ᴍʏ ꜰᴜɴᴄᴛɪᴏɴꜱ. 😊</b>")
 
+AUTH_CHANNEL = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('AUTH_CHANNEL', '-1002385466192').split()] # give channel id with seperate space. Ex : ('-10073828 -102782829 -1007282828')
 
-UPDATE_CHANNEL = os.environ.get('UPDATE_CHANNEL', '-1002385466192')
