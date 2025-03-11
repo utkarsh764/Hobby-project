@@ -64,28 +64,29 @@ class Database:
     async def delete_broadcast_message(self, user_id):
         await self.users.update_one({"_id": user_id}, {"$unset": {"last_broadcast_msg": ""}})
 
+
     # =================== CHANNEL SYSTEM ===================
 
-    # Add a channel to the database
     async def add_channel(self, channel_id):
-        if not await self.channels.find_one({"_id": channel_id}):
+        """Add a channel if it doesn't already exist."""
+        channel_id = int(channel_id)  # Ensure ID is an integer
+        if not await self.is_channel_exist(channel_id):
             await self.channels.insert_one({"_id": channel_id})
-            return True  # New channel added
-        return False  # Channel already exists
+            return True  # Successfully added
+        return False  # Already exists
 
-    # Remove a channel from the database
     async def remove_channel(self, channel_id):
+        """Remove a channel from the database."""
+        channel_id = int(channel_id)
         await self.channels.delete_one({"_id": channel_id})
 
-    # Check if a channel exists
     async def is_channel_exist(self, channel_id):
-        channel = await self.channels.find_one({"_id": channel_id})
-        return bool(channel)
+        """Check if a channel is in the database."""
+        return await self.channels.find_one({"_id": int(channel_id)}) is not None
 
-    # Get all stored channels
     async def get_all_channels(self):
-        channels_cursor = self.channels.find({})
-        return [channel["_id"] async for channel in channels_cursor]
+        """Retrieve all channel IDs as a list."""
+        return [channel["_id"] async for channel in self.channels.find({})]
 
 
 # Initialize Database
