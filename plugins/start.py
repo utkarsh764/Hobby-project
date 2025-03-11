@@ -13,27 +13,16 @@ LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 
 #=====================================================================================
 
-@Client.on_message(filters.private & filters.command("start"))
-async def start(client: Client, message: Message):
+@Client.on_message(filters.private & filters.command("start") & user_filter)
+async def start(client, message):
     try:
-        # React to the message with a random emoji
         await message.react(emoji=random.choice(REACTIONS), big=True)
-    except Exception as e:
-        print(f"Failed to react to message: {e}")
-
-    # Add user to the database if they don't exist
+    except:
+        pass
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id)
         total_users = await db.total_users_count()
-        await client.send_message(
-            LOG_CHANNEL,
-            LOG_TEXT.format(
-                message.from_user.mention,
-                message.from_user.id,
-                total_users
-            )
-        )
-        
+        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
     txt = (
         f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
@@ -43,11 +32,11 @@ async def start(client: Client, message: Message):
     button = InlineKeyboardMarkup([
         [InlineKeyboardButton('📜 ᴀʙᴏᴜᴛ', callback_data='about'), InlineKeyboardButton('🕵🏻‍♀️ ʜᴇʟᴘ', callback_data='help')]
     ])
-
     if START_PIC:
         await message.reply_photo(START_PIC, caption=txt, reply_markup=button)
     else:
         await message.reply_text(text=txt, reply_markup=button, disable_web_page_preview=True)
+        
 #=====================================================================================
 
 # Set bot commands
