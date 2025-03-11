@@ -70,7 +70,7 @@ async def send_msg(bot, user_id, message):
         return 500
 
 
-@Client.on_message(filters.private & filters.command('dbroadcast') & filters.user(ADMIN) & filters.reply)
+@Client.on_message(filters.private & filters.command('dbroadcast') & filters.user(ADMIN))
 async def delete_broadcast(client: Bot, message: Message):
     if message.reply_to_message:
         try:
