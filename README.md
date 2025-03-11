@@ -66,10 +66,10 @@ broadcast - 📩 sᴇɴᴅ ʙʀᴏᴀᴅᴄᴀsᴛ (ᴏᴡɴᴇʀ)
 
 #### 🥰 Features
  * PDF merging
- * Supports Broadcasts.
- * Has a custom Start-up pic.
- * Force subscribe available.
- * File renaming 
+ * Restricted content saver 
+ * Telegraph link generator 
+ * File renaming
+ * Many more (I don't remember)
 
 
 #### 🧡 Credits... 🧡
