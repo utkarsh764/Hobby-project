@@ -5,7 +5,7 @@ from config import START_PIC, ADMIN, REACTIONS, LOG_CHANNEL
 from helper.txt import mr
 from helper.database import db
 import random
-from F_Sub import *
+from plugins.F_Sub import *
 
 LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 <blockquote><b>☃️ Nᴀᴍᴇ :~ {}
