@@ -5,7 +5,7 @@ import logging
 import datetime
 from config import ADMIN
 from helper.database import db
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import Message
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, PeerIdInvalid
 
@@ -50,8 +50,7 @@ async def broadcast_handler(bot: Client, m: Message):
 
 async def send_msg(bot, user_id, message):
     try:
-        sent_msg = await message.copy(chat_id=int(user_id))
-        await db.add_broadcast_message(user_id, sent_msg.message_id)  # Store message ID
+        await message.copy(chat_id=int(user_id))
         return 200
     except FloodWait as e:
         await asyncio.sleep(e.value)
@@ -68,7 +67,6 @@ async def send_msg(bot, user_id, message):
     except Exception as e:
         logger.error(f"{user_id} : {e}")
         return 500
-
 
 @Client.on_message(filters.private & filters.command('dbroadcast') & filters.user(ADMIN) & filters.reply)
 async def delete_broadcast(bot: Client, message: Message):
@@ -89,14 +87,12 @@ async def delete_broadcast(bot: Client, message: Message):
             chat_id = user["_id"]
             try:
                 sent_msg = await broadcast_msg.copy(chat_id)
-                await db.add_broadcast_message(chat_id, sent_msg.message_id)  # Store message ID
                 await asyncio.sleep(duration)  # Wait for the duration
                 await sent_msg.delete()  # Delete message after the duration
                 successful += 1
             except FloodWait as e:
                 await asyncio.sleep(e.value)
                 sent_msg = await broadcast_msg.copy(chat_id)
-                await db.add_broadcast_message(chat_id, sent_msg.message_id)
                 await asyncio.sleep(duration)
                 await sent_msg.delete()
                 successful += 1
