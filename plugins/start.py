@@ -1,7 +1,7 @@
 from asyncio import sleep
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, Message, BotCommand
-from config import START_PIC, ADMIN, REACTIONS, LOG_CHANNEL
+from config import *
 from helper.txt import mr
 from helper.database import db
 from pyrogram.errors import *
