@@ -7,16 +7,8 @@
 <p align="center">🤍 Thanks for Being Here 🤍</p>
 
 ### ⋗ To-Dos
-- [x] PDFs merging
-- [X] Image merging 
-- [x] stickerid + telegraph + id
-- [x] Restricted content saver 
-- [x] Accept pending join requests
-- [x] react on start message
-- [x] Force subscribe
-- [X] add /set command ,to set commands for bot
-- [X] Renaming
 - [ ] Invert PDFs (exam baad)
+- [ ] N-Up
 
 
 ### 🚦 Commands
