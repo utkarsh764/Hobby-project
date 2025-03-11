@@ -2,12 +2,11 @@ import os
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import UserNotParticipant
-from database.database import *
 from config import *
 
 @Client.on_message(filters.private & filters.incoming)
 async def forcesub(c, m):
-    owner = await c.get_users(int(OWNER_ID))
+    owner = await c.get_users(int(ADMIN))
     if UPDATE_CHANNEL:
         try:
             user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
@@ -36,7 +35,7 @@ async def forcesub(c, m):
 
 @Client.on_callback_query(filters.regex('^refresh'))
 async def refresh_cb(c, m):
-    owner = await c.get_users(int(OWNER_ID))
+    owner = await c.get_users(int(ADMIN))
     if UPDATE_CHANNEL:
         try:
             user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
@@ -47,7 +46,7 @@ async def refresh_cb(c, m):
                    pass
                return
         except UserNotParticipant:
-            await m.answer('Yᴏᴜ ᴀʀᴇ ɴᴏᴛ ʏᴇᴛ ᴊᴏɪɴᴇᴅ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ. \nFɪʀsᴛ ᴊᴏɪɴ ᴀɴᴅ ᴛʜᴇɴ ᴘʀᴇss ʀᴇғʀᴇsʜ ʙᴜᴛᴛᴏɴ 🤤', show_alert=True)
+            await m.answer('Yᴏᴜ ᴀʀᴇ ɴᴏᴛ ʏᴇᴛ ᴊᴏɪɴᴇᴅ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ. \nFɪʀsᴛ ᴊᴏɪɴ ᴀɴᴅ ᴛʜᴇɴ ᴘʀᴇss ʀᴇғʀᴇsʜ ʙᴜᴛᴛᴏɴ ', show_alert=True)
             return
         except Exception as e:
             print(e)
