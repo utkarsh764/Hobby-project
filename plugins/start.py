@@ -34,11 +34,11 @@ async def start(client, message):
             if btn:
                 username = (await client.get_me()).username
                 start_param = message.command[1] if len(message.command) > 1 else "true"
-                btn.append([InlineKeyboardButton("♻️ Try Again ♻️", url=f"https://t.me/{username}?start={start_param}")])
+                btn.append([InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", url=f"https://t.me/{username}?start={start_param}")])
                 
                 await message.reply_photo(
                     photo=FORCE_PIC,  # Using the variable FORCE_PIC
-                    caption=f"<b>👋 Hello {message.from_user.mention},\n\nPlease join the channel then click on try again button. 😇</b>",
+                    caption=f"<b>👋 Hello {message.from_user.mention},\nʏᴏᴜ ɴᴇᴇᴅ ᴊᴏɪɴ Mʏ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ᴜsᴇ ᴍᴇ 😉\n\nPʀᴇss ᴛʜᴇ Fᴏʟʟᴏᴡɪɴɢ Bᴜᴛᴛᴏɴ ᴛᴏ ᴊᴏɪɴ Nᴏᴡ 👇</b>",
                     reply_markup=InlineKeyboardMarkup(btn)
                 )
                 return
