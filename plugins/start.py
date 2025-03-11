@@ -5,7 +5,7 @@ from config import START_PIC, ADMIN, REACTIONS, LOG_CHANNEL
 from helper.txt import mr
 from helper.database import db
 import random
-from plugins.F_Sub import *
+from F_Sub import *
 
 LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 <blockquote><b>☃️ Nᴀᴍᴇ :~ {}
@@ -13,6 +13,16 @@ LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 👨‍👨‍👦‍👦 ᴛᴏᴛᴀʟ :~ {}</b></blockquote>"""
 
 #=====================================================================================
+@Client.on_message(filters.command("help") & filters.private)
+async def help(client: Client, message: Message):
+    
+    user_id = message.from_user.id
+
+    # Check if the user is subscribed to all required channels
+    
+
+    # If subscribed, proceed with the help command
+    await message.reply_text("Here is the help menu.")
 #=====================================================================================
 
 @Client.on_message(filters.private & filters.command("start"))
@@ -25,6 +35,10 @@ async def start(client, message):
         await db.add_user(message.from_user.id)
         total_users = await db.total_users_count()
         await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
+#f_sub
+    if not await check_subscription(client, message.from_user.id):       
+        await force_sub_message(client, message)
+        return
     txt = (
         f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
