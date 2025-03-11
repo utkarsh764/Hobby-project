@@ -1,5 +1,4 @@
 from pyrogram import Client, filters
-from config import API_ID, API_HASH, BOT_TOJEN
 from helper.database import db
 
 # Command to add the channel (Only works if sent in a channel)
