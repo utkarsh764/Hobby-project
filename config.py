@@ -24,16 +24,12 @@ NEW_REQ_MODE = bool(environ.get('NEW_REQ_MODE', False))
 SESSION_STRING = os.environ.get("SESSION_STRING", "")
 REACTIONS = ["🤝", "😇", "🤗", "😍", "🎅", "🥰", "🤩", "😘", "😛", "😈", "🎉", "🫡", "😎", "🔥", "🤭", "🌚", "🆒", "👻", "😁"] #don't add any emoji because tg not support all emoji reactions
 
-FORCE_SUB_CHANNEL1 = os.environ.get("F_SUB1", "-1002385466192")
-FORCE_SUB_CHANNEL2 = os.environ.get("F_SUB2", "")
-FORCE_SUB_CHANNEL3 = os.environ.get("F_SUB3", "")
-FORCE_SUB_CHANNEL4 = os.environ.get("F_SUB4", "")
 
+#Force Sub
+FORCE_SUB_CHANNEL1 = int(os.environ.get("FORCE_SUB_CHANNEL1", "-1002385466192"))#put 0 to disable
+FORCE_SUB_CHANNEL2 = int(os.environ.get("FORCE_SUB_CHANNEL2", "0"))#put 0 to disable
+FORCE_SUB_CHANNEL3 = int(os.environ.get("FORCE_SUB_CHANNEL3", "0"))#put 0 to disable
+FORCE_SUB_CHANNEL4 = int(os.environ.get("FORCE_SUB_CHANNEL4", "0"))#put 0 to disable
 
-#new
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002027394591"))
-FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "ʜᴇʟʟᴏ {first}\n\n<b>ᴊᴏɪɴ ᴏᴜʀ ᴄʜᴀɴɴᴇʟs ᴀɴᴅ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ʀᴇʟᴏᴀᴅ button ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ʀᴇǫᴜᴇꜱᴛᴇᴅ ꜰɪʟᴇ.</b>")
-F_SUB_1 = int(os.environ.get("F_SUB_1", "-1002481520987"))#put 0 to disable
-F_SUB_2 = int(os.environ.get("F_SUB_2", "0"))#put 0 to disable
-F_SUB_3 = int(os.environ.get("F_SUB_3", "0"))#put 0 to disable
-F_SUB_4 = int(os.environ.get("F_SUB_4", "0"))#put 0 to disable
+FORCE_PIC = os.environ.get("FORCE_PIC", "https://telegra.ph/file/e292b12890b8b4b9dcbd1.jpg")
+FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "<b>ʜᴇʟʟᴏ ᴜꜱᴇʀ 👋🏻\nᴊᴏɪɴ ᴏᴜʀ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ ᴀɴᴅ ᴄʟɪᴄᴋ ʀᴇʟᴏᴀᴅ ᴛᴏ ᴀᴄᴄᴇꜱꜱ ᴍʏ ꜰᴜɴᴄᴛɪᴏɴꜱ. 😊</b>")
