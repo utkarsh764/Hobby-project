@@ -48,6 +48,9 @@ broadcast - 📩 sᴇɴᴅ ʙʀᴏᴀᴅᴄᴀsᴛ (ᴏᴡɴᴇʀ)
 * `FORCE_SUB` - your force sub channel username without @ 
 * `START_PIC` - start message photo
 * `Port` - 8080
+* `FORCE_PIC`
+* `LOG_CHANNEL`
+* `AUTH_CHANNEL`
 
 
 ### 📶 DEPLOYEMENT SUPPORT
