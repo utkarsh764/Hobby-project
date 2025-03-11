@@ -1,122 +1,57 @@
-# force_sub.py
-
+import os
 from pyrogram import Client, filters
-from pyrogram.enums import ChatMemberStatus
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import UserNotParticipant
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from database.database import *
 from config import *
 
-# Force Check Logic
-async def is_subscribed(client, user_id, channel_id):
-    """
-    Check if a user is subscribed to a specific channel.
-    
-    Args:
-        client: The Pyrogram Client instance.
-        user_id: The ID of the user to check.
-        channel_id: The ID of the channel to check.
-    
-    Returns:
-        bool: True if the user is subscribed, False otherwise.
-    """
-    if not channel_id:
-        return True
-    if user_id in ADMINS:
-        return True
-    try:
-        member = await client.get_chat_member(chat_id=channel_id, user_id=user_id)
-        if member.status in [ChatMemberStatus.OWNER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.MEMBER]:
-            return True
-    except UserNotParticipant:
-        return False
-    return False
-
-async def check_subscription(client, user_id):
-    """
-    Check if a user is subscribed to all required channels.
-    
-    Args:
-        client: The Pyrogram Client instance.
-        user_id: The ID of the user to check.
-    
-    Returns:
-        bool: True if the user is subscribed to all channels, False otherwise.
-    """
-    channels = [FORCE_SUB_CHANNEL1, FORCE_SUB_CHANNEL2, FORCE_SUB_CHANNEL3, FORCE_SUB_CHANNEL4]
-    for channel_id in channels:
-        if channel_id and not await is_subscribed(client, user_id, channel_id):
-            return False
-    return True
-#=====================================================================================
-#force sub reply (don't touch it)
-
-async def force_sub_message(client: Client, message: Message):
-    # Initialize buttons list
-    buttons = []
-
-    # Check if the first and second channels are both set
-    if FORCE_SUB_CHANNEL1 and FORCE_SUB_CHANNEL2:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink1),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink2),
-        ])
-    # Check if only the first channel is set
-    elif FORCE_SUB_CHANNEL1:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink1)
-        ])
-    # Check if only the second channel is set
-    elif FORCE_SUB_CHANNEL2:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink2)
-        ])
-
-    # Check if the third and fourth channels are set
-    if FORCE_SUB_CHANNEL3 and FORCE_SUB_CHANNEL4:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink3),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink4),
-        ])
-    # Check if only the first channel is set
-    elif FORCE_SUB_CHANNEL3:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink3)
-        ])
-    # Check if only the second channel is set
-    elif FORCE_SUB_CHANNEL4:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink4)
-        ])
-
-    # Append "Try Again" button if the command has a second argument
-    try:
-        buttons.append([
-            InlineKeyboardButton(
-                text="ʀᴇʟᴏᴀᴅ",
-                url=f"https://t.me/{client.username}?start={message.command[1]}"
+@Client.on_message(filters.private & filters.incoming)
+async def forcesub(c, m):
+    owner = await c.get_users(int(OWNER_ID))
+    if UPDATE_CHANNEL:
+        try:
+            user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
+            if user.status == "kicked":
+               await m.reply_text("**Yᴏᴜ ᴀʀᴇ ʙᴀɴɴᴇᴅ ɪɴ Oᴜʀ ᴄʜᴀɴɴᴇʟ Cᴏɴᴛᴀᴄᴛ Aᴅᴍɪɴ 😜**", quote=True)
+               return
+        except UserNotParticipant:
+            buttons = [[InlineKeyboardButton(text='Uᴘᴅᴀᴛᴇs Cʜᴀɴɴᴇʟ 🔖', url=f"https://t.me/{UPDATE_CHANNEL}")]]
+            if m.text:
+                if (len(m.text.split(' ')) > 1) & ('start' in m.text):
+                    chat_id, msg_id = m.text.split(' ')[1].split('_')
+                    buttons.append([InlineKeyboardButton('🔄 Rᴇғʀᴇsʜ', callback_data=f'refresh+{chat_id}+{msg_id}')])
+            await m.reply_text(
+                f"Hey {m.from_user.mention(style='md')} ʏᴏᴜ ɴᴇᴇᴅ ᴊᴏɪɴ Mʏ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ᴜsᴇ ᴍᴇ 😉\n\n"
+                "__Pʀᴇss ᴛʜᴇ Fᴏʟʟᴏᴡɪɴɢ Bᴜᴛᴛᴏɴ ᴛᴏ ᴊᴏɪɴ Nᴏᴡ 👇__",
+                reply_markup=InlineKeyboardMarkup(buttons),
+                quote=True
             )
-        ])
-    except IndexError:
-        pass  # Ignore if no second argument is present
+            return
+        except Exception as e:
+            print(e)
+            await m.reply_text(f"Sᴏᴍᴇᴛʜɪɴɢ Wʀᴏɴɢ. Pʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ ᴏʀ ᴄᴏɴᴛᴀᴄᴛ {owner.mention(style='md')}", quote=True)
+            return
+    await m.continue_propagation()
 
-    await message.reply_photo(
-        photo=FORCE_PIC,
-        caption=FORCE_MSG.format(
-        first=message.from_user.first_name,
-        last=message.from_user.last_name,
-        username=None if not message.from_user.username else '@' + message.from_user.username,
-        mention=message.from_user.mention,
-        id=message.from_user.id
-    ),
-    reply_markup=InlineKeyboardMarkup(buttons)#,
-    #message_effect_id=5104841245755180586  # Add the effect ID here
-    )
 
-#=====================================================================================
+@Client.on_callback_query(filters.regex('^refresh'))
+async def refresh_cb(c, m):
+    owner = await c.get_users(int(OWNER_ID))
+    if UPDATE_CHANNEL:
+        try:
+            user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
+            if user.status == "kicked":
+               try:
+                   await m.message.edit("**Yᴏᴜ ᴀʀᴇ ʙᴀɴɴᴇᴅ ɪɴ Oᴜʀ ᴄʜᴀɴɴᴇʟ Cᴏɴᴛᴀᴄᴛ Aᴅᴍɪɴ 😜**")
+               except:
+                   pass
+               return
+        except UserNotParticipant:
+            await m.answer('Yᴏᴜ ᴀʀᴇ ɴᴏᴛ ʏᴇᴛ ᴊᴏɪɴᴇᴅ ᴏᴜʀ ᴄʜᴀɴɴᴇʟ. \nFɪʀsᴛ ᴊᴏɪɴ ᴀɴᴅ ᴛʜᴇɴ ᴘʀᴇss ʀᴇғʀᴇsʜ ʙᴜᴛᴛᴏɴ 🤤', show_alert=True)
+            return
+        except Exception as e:
+            print(e)
+            await m.message.edit(f"Sᴏᴍᴇᴛʜɪɴɢ Wʀᴏɴɢ. Pʟᴇᴀsᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ ᴏʀ ᴄᴏɴᴛᴀᴄᴛ{owner.mention(style='md')}")
+            return
 
-# Filters for Subscription Checks
-subscribed1 = filters.create(lambda _, __, ___: check_subscription(_, __.from_user.id))
-subscribed2 = filters.create(lambda _, __, ___: check_subscription(_, __.from_user.id))
-subscribed3 = filters.create(lambda _, __, ___: check_subscription(_, __.from_user.id))
-subscribed4 = filters.create(lambda _, __, ___: check_subscription(_, __.from_user.id))
-
+    
