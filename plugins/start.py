@@ -13,71 +13,9 @@ LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 👨‍👨‍👦‍👦 ᴛᴏᴛᴀʟ :~ {}</b></blockquote>"""
 
 #=====================================================================================
-@Client.on_message(filters.command('start') & filters.private)
-async def not_joined(client: Client, message: Message):
-    # Initialize buttons list
-    buttons = []
-
-    # Check if the first and second channels are both set
-    if FORCE_SUB_CHANNEL1 and FORCE_SUB_CHANNEL2:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink1),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink2),
-        ])
-    # Check if only the first channel is set
-    elif FORCE_SUB_CHANNEL1:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink1)
-        ])
-    # Check if only the second channel is set
-    elif FORCE_SUB_CHANNEL2:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink2)
-        ])
-
-    # Check if the third and fourth channels are set
-    if FORCE_SUB_CHANNEL3 and FORCE_SUB_CHANNEL4:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", url=client.invitelink3),
-            InlineKeyboardButton(text="ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ •", url=client.invitelink4),
-        ])
-    # Check if only the first channel is set
-    elif FORCE_SUB_CHANNEL3:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink3)
-        ])
-    # Check if only the second channel is set
-    elif FORCE_SUB_CHANNEL4:
-        buttons.append([
-            InlineKeyboardButton(text="• ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ•", url=client.invitelink4)
-        ])
-
-    # Append "Try Again" button if the command has a second argument
-    try:
-        buttons.append([
-            InlineKeyboardButton(
-                text="ʀᴇʟᴏᴀᴅ",
-                url=f"https://t.me/{client.username}?start={message.command[1]}"
-            )
-        ])
-    except IndexError:
-        pass  # Ignore if no second argument is present
-
-    await message.reply_photo(
-        photo=FORCE_PIC,
-        caption=FORCE_MSG.format(
-        first=message.from_user.first_name,
-        last=message.from_user.last_name,
-        username=None if not message.from_user.username else '@' + message.from_user.username,
-        mention=message.from_user.mention,
-        id=message.from_user.id
-    ),
-    reply_markup=InlineKeyboardMarkup(buttons)#,
-    #message_effect_id=5104841245755180586  # Add the effect ID here
-    )
 #=====================================================================================
 
-@Client.on_message(filters.private & filters.command("start") & subscribed1 & subscribed2 & subscribed3 & subscribed4)
+@Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
