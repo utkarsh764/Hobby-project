@@ -10,6 +10,13 @@
 - [ ] Invert PDFs (exam baad)
 - [ ] N-Up
 
+### 🥰 Features
+ * PDF merging
+ * Restricted content saver 
+ * Telegraph link generator 
+ * File renaming
+ * Accept pending join requests
+ * Many more (I don't remember)
 
 ### 🚦 Commands
 ```
@@ -54,16 +61,6 @@ broadcast - 📩 sᴇɴᴅ ʙʀᴏᴀᴅᴄᴀsᴛ (ᴏᴡɴᴇʀ)
   <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy">
 </a>
 </p>
-
-
-#### 🥰 Features
- * PDF merging
- * Restricted content saver 
- * Telegraph link generator 
- * File renaming
- * Accept pending join requests
- * Many more (I don't remember)
-
 
 #### 🧡 Credits... 🧡
 - [🔥 AMIT SINGH](https://github.com/Ur_Amit_01) 
