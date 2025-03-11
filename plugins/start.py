@@ -5,7 +5,6 @@ from config import START_PIC, ADMIN, REACTIONS, LOG_CHANNEL
 from helper.txt import mr
 from helper.database import db
 import random
-from F_Sub import *
 
 LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 <blockquote><b>☃️ Nᴀᴍᴇ :~ {}
@@ -34,18 +33,7 @@ async def start(client: Client, message: Message):
                 total_users
             )
         )
-
-    # Check if the user is subscribed to all required channels
-    try:
-        if not await check_subscription(client, message.from_user.id):
-            await force_sub_message(client, message)
-            return
-    except Exception as e:
-        print(f"Failed to check subscription: {e}")
-        await message.reply_text("An error occurred while checking your subscription. Please try again later.")
-        return
-
-    # If the user is subscribed, send the start message
+        
     txt = (
         f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
