@@ -69,22 +69,60 @@ async def send_msg(bot, user_id, message):
         logger.error(f"{user_id} : {e}")
         return 500
 
-@Client.on_message(filters.command("del_broadcast") & filters.user(ADMIN))
-async def delete_broadcast(bot: Client, message: Message):
-    all_users = await db.get_all_users()
-    delete_msg = await message.reply("Deleting broadcast messages...")
 
-    deleted, failed = 0, 0
-    async for user in all_users:
-        msg_id = await db.get_broadcast_message(user['_id'])
-        if msg_id:
+@Client.on_message(filters.private & filters.command('dbroadcast') & filters.user(ADMIN) & filters.reply)
+async def delete_broadcast(client: Bot, message: Message):
+    if message.reply_to_message:
+        try:
+            duration = int(message.command[1])  # Get the duration in seconds
+        except (IndexError, ValueError):
+            await message.reply("<b>Please provide a valid duration in seconds.</b> Usage: /dbroadcast {duration}")
+            return
+
+        query = await full_userbase()
+        broadcast_msg = message.reply_to_message
+        total = 0
+        successful = 0
+        blocked = 0
+        deleted = 0
+        unsuccessful = 0
+
+        pls_wait = await message.reply("<i>Broadcast with auto-delete processing....</i>")
+        for chat_id in query:
             try:
-                await bot.delete_messages(user['_id'], msg_id)
-                await db.delete_broadcast_message(user['_id'])
+                sent_msg = await broadcast_msg.copy(chat_id)
+                await asyncio.sleep(duration)  # Wait for the specified duration
+                await sent_msg.delete()  # Delete the message after the duration
+                successful += 1
+            except FloodWait as e:
+                await asyncio.sleep(e.x)
+                sent_msg = await broadcast_msg.copy(chat_id)
+                await asyncio.sleep(duration)
+                await sent_msg.delete()
+                successful += 1
+            except UserIsBlocked:
+                await del_user(chat_id)
+                blocked += 1
+            except InputUserDeactivated:
+                await del_user(chat_id)
                 deleted += 1
-            except Exception as e:
-                logger.error(f"Failed to delete message for {user['_id']}: {e}")
-                failed += 1
+            except:
+                unsuccessful += 1
+                pass
+            total += 1
 
-    await delete_msg.edit(f"**Broadcast deletion completed:\n✅ Deleted: {deleted}\n❌ Failed: {failed}**")
+        status = f"""<b><u>Broadcast with Auto-Delete...</u>
+
+Total Users: <code>{total}</code>
+Successful: <code>{successful}</code>
+Blocked Users: <code>{blocked}</code>
+Deleted Accounts: <code>{deleted}</code>
+Unsuccessful: <code>{unsuccessful}</code></b>"""
+
+        return await pls_wait.edit(status)
+
+    else:
+        msg = await message.reply("Please reply to a message to broadcast it with auto-delete.")
+        await asyncio.sleep(8)
+        await msg.delete()
 
