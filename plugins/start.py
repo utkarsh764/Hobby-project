@@ -28,6 +28,10 @@ async def is_subscribed(bot, query, channel):
 
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
+    if not await db.is_user_exist(message.from_user.id):
+        await db.add_user(message.from_user.id)
+        total_users = await db.total_users_count()
+        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
     if AUTH_CHANNEL:
         try:
             btn = await is_subscribed(client, message, AUTH_CHANNEL)
@@ -47,11 +51,7 @@ async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
     except:
-        pass
-    if not await db.is_user_exist(message.from_user.id):
-        await db.add_user(message.from_user.id)
-        total_users = await db.total_users_count()
-        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
+        pass    
     txt = (
         f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
