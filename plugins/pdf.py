@@ -9,7 +9,7 @@ from pyrogram import Client, filters
 from PyPDF2 import PdfMerger
 from pyrogram.types import Message
 from config import LOG_CHANNEL
-from filters import user_filter
+from helper.database import db
 
 logger = logging.getLogger(__name__)
 
@@ -107,124 +107,129 @@ class MergePlugin:
         await message.reply_text("**✍️ Type a name for your merged PDF 📄.**")
         self.user_states[user_id] = "waiting_for_filename"  # Set user state
 
+
     async def handle_filename(self, client: Client, message: Message):
-        user_id = message.from_user.id
+    user_id = message.from_user.id
 
-        # Only process if the user is in the "waiting_for_filename" state
-        if user_id not in self.user_states or self.user_states[user_id] != "waiting_for_filename":
-            return
+    # Only process if the user is in the "waiting_for_filename" state
+    if user_id not in self.user_states or self.user_states[user_id] != "waiting_for_filename":
+        return
 
-        custom_filename = message.text.strip()
+    custom_filename = message.text.strip()
 
-        if not custom_filename:
-            await message.reply_text("❌ Filename cannot be empty. Please try again.")
-            return
+    if not custom_filename:
+        await message.reply_text("❌ Filename cannot be empty. Please try again.")
+        return
 
-        # Check if the filename contains a thumbnail link
-        match = re.match(r"(.*)\s*-t\s*(https?://\S+)", custom_filename)
-        if match:
-            filename_without_thumbnail = match.group(1).strip()
-            thumbnail_link = match.group(2).strip()
+    thumbnail_path = None  # Default: No thumbnail
 
-            # Validate the thumbnail link
-            try:
-                response = requests.get(thumbnail_link, timeout=10)
-                if response.status_code != 200:
-                    await message.reply_text("❌ Failed to fetch the image. Please provide a valid thumbnail link.")
-                    return
+    # Check if the filename contains a thumbnail link
+    match = re.match(r"(.*)\s*-t\s*(https?://\S+)", custom_filename)
+    if match:
+        filename_without_thumbnail = match.group(1).strip()
+        thumbnail_link = match.group(2).strip()
 
-                # Save the image to a temporary file
+        # Validate and download the thumbnail link
+        try:
+            response = requests.get(thumbnail_link, timeout=10)
+            if response.status_code == 200:
                 with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_thumbnail:
                     temp_thumbnail.write(response.content)
-                    thumbnail_path = temp_thumbnail.name
-
-            except Exception as e:
-                await message.reply_text(f"❌ Error while downloading the thumbnail: {e}")
+                    thumbnail_path = temp_thumbnail.name  # Save the path
+            else:
+                await message.reply_text("❌ Failed to fetch the image. Please provide a valid thumbnail link.")
                 return
-
-        else:
-            filename_without_thumbnail = custom_filename
-            thumbnail_path = None  # No thumbnail provided
-
-        # Proceed to merge the files
-        progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... ⏰**")
-
-        try:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                output_file = os.path.join(temp_dir, f"{filename_without_thumbnail}.pdf")
-                merger = PdfMerger()
-
-                total_files = len(self.user_file_metadata[user_id])
-                for index, file_data in enumerate(self.user_file_metadata[user_id], start=1):
-                    if file_data["type"] == "pdf":
-                        file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
-                        merger.append(file_path)
-                        await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
-                    elif file_data["type"] == "image":
-                        img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
-                        image = Image.open(img_path).convert("RGB")
-                        img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
-                        image.save(img_pdf_path, "PDF")
-                        merger.append(img_pdf_path)
-                        await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
-
-                merger.write(output_file)
-                merger.close()
-
-                # Send the merged file with or without the thumbnail
-                if thumbnail_path:
-                    await client.send_document(
-                        chat_id=message.chat.id,
-                        document=output_file,
-                        thumb=thumbnail_path,  # Set the thumbnail
-                        caption="**🎉 Here is your merged PDF 📄.**",
-                    )
-                    asyncio.create_task(client.send_document(
-                        chat_id=LOG_CHANNEL,
-                        document=output_file,
-                        thumb=thumbnail_path,
-                        caption=(
-                            f">**📑 Merged PDF**\n"
-                            f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
-                            f">**🪪 ID :- `{message.from_user.id}`**"
-                    )))
-                else:
-                    await client.send_document(
-                        chat_id=message.chat.id,
-                        document=output_file,
-                        caption="**🎉 Here is your merged PDF 📄.**",
-                    )
-                    asyncio.create_task(client.send_document(
-                        chat_id=LOG_CHANNEL,
-                        document=output_file,
-                        caption=(
-                            f">**📑 Merged PDF**\n"
-                            f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
-                            f">**🪪 ID :- `{message.from_user.id}`**"
-                    )))
-
-                await progress_message.delete()
-
-                # Send a sticker after sending the merged PDF
-                await client.send_sticker(
-                    chat_id=message.chat.id,
-                    sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
-                )
-
         except Exception as e:
-            await progress_message.edit_text(f"❌ Failed to merge files: {e}")
+            await message.reply_text(f"❌ Error while downloading the thumbnail: {e}")
+            return
 
-        finally:
-            # Reset the user's state
-            self.user_file_metadata.pop(user_id, None)
-            self.user_states.pop(user_id, None)
-            self.pending_filename_requests.pop(user_id, None)
+    else:
+        filename_without_thumbnail = custom_filename
+        # If no thumbnail link was provided, check the database for a saved thumbnail
+        user_thumbnail = db.get_thumbnail(user_id)  # Retrieve from DB
+        if user_thumbnail:
+            thumbnail_path = user_thumbnail  # Use the stored thumbnail
+
+    # Proceed to merge the files
+    progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... ⏰**")
+
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_file = os.path.join(temp_dir, f"{filename_without_thumbnail}.pdf")
+            merger = PdfMerger()
+
+            total_files = len(self.user_file_metadata[user_id])
+            for index, file_data in enumerate(self.user_file_metadata[user_id], start=1):
+                if file_data["type"] == "pdf":
+                    file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
+                    merger.append(file_path)
+                    await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
+                elif file_data["type"] == "image":
+                    img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
+                    image = Image.open(img_path).convert("RGB")
+                    img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
+                    image.save(img_pdf_path, "PDF")
+                    merger.append(img_pdf_path)
+                    await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
+
+            merger.write(output_file)
+            merger.close()
+
+            # Send the merged file with or without the thumbnail
+            if thumbnail_path:
+                await client.send_document(
+                    chat_id=message.chat.id,
+                    document=output_file,
+                    thumb=thumbnail_path,  # Set the thumbnail
+                    caption="**🎉 Here is your merged PDF 📄.**",
+                )
+                asyncio.create_task(client.send_document(
+                    chat_id=LOG_CHANNEL,
+                    document=output_file,
+                    thumb=thumbnail_path,
+                    caption=(
+                        f">**📑 Merged PDF**\n"
+                        f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
+                        f">**🪪 ID :- `{message.from_user.id}`**"
+                )))
+            else:
+                await client.send_document(
+                    chat_id=message.chat.id,
+                    document=output_file,
+                    caption="**🎉 Here is your merged PDF 📄.**",
+                )
+                asyncio.create_task(client.send_document(
+                    chat_id=LOG_CHANNEL,
+                    document=output_file,
+                    caption=(
+                        f">**📑 Merged PDF**\n"
+                        f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
+                        f">**🪪 ID :- `{message.from_user.id}`**"
+                )))
+
+            await progress_message.delete()
+
+            # Send a sticker after sending the merged PDF
+            await client.send_sticker(
+                chat_id=message.chat.id,
+                sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
+            )
+
+    except Exception as e:
+        await progress_message.edit_text(f"❌ Failed to merge files: {e}")
+
+    finally:
+        # Reset the user's state
+        self.user_file_metadata.pop(user_id, None)
+        self.user_states.pop(user_id, None)
+        self.pending_filename_requests.pop(user_id, None)
+                        
 
 # Initialize the plugin
 merge_plugin = MergePlugin()
 
 # Register handlers
-@Client.on_message(filters.command(["merge"]) & user_filter)
+@Client.on_message(filters.command(["merge"]))
 async def start_file_collection(client: Client, message: Message):
     await merge_plugin.start_file_collection(client, message)
 
@@ -240,7 +245,7 @@ async def handle_image_metadata(client: Client, message: Message):
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "collecting_files":
         await merge_plugin.handle_image_metadata(client, message)
 
-@Client.on_message(filters.command(["done"]) & user_filter)
+@Client.on_message(filters.command(["done"]))
 async def merge_files(client: Client, message: Message):
     await merge_plugin.merge_files(client, message)
 
