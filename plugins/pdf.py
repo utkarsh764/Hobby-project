@@ -110,7 +110,7 @@ class MergePlugin:
     async def handle_filename(self, client: Client, message: Message):
         user_id = message.from_user.id
 
-        # Only process if the user is in the "waiting_for_filename" state
+    # Only process if the user is in the "waiting_for_filename" state
         if user_id not in self.user_states or self.user_states[user_id] != "waiting_for_filename":
             return
 
@@ -128,7 +128,7 @@ class MergePlugin:
             filename_without_thumbnail = match.group(1).strip()
             thumbnail_link = match.group(2).strip()
 
-            # Validate and download the thumbnail link
+        # Validate and download the thumbnail link
             try:
                 response = requests.get(thumbnail_link, timeout=10)
                 if response.status_code == 200:
@@ -149,7 +149,7 @@ class MergePlugin:
             if user_thumbnail:
                 thumbnail_path = user_thumbnail  # Use the stored thumbnail
 
-        # Proceed to merge the files
+    # Proceed to merge the files
         progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... ⏰**")
 
         try:
@@ -161,10 +161,16 @@ class MergePlugin:
                 for index, file_data in enumerate(self.user_file_metadata[user_id], start=1):
                     if file_data["type"] == "pdf":
                         file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
+                        if not os.path.exists(file_path):
+                            await message.reply_text(f"❌ File {file_data['file_name']} not found. Please try again.")
+                            return
                         merger.append(file_path)
                         await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
                     elif file_data["type"] == "image":
                         img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
+                        if not os.path.exists(img_path):
+                            await message.reply_text(f"❌ Image {file_data['file_name']} not found. Please try again.")
+                            return
                         image = Image.open(img_path).convert("RGB")
                         img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                         image.save(img_pdf_path, "PDF")
@@ -211,17 +217,7 @@ class MergePlugin:
                 # Send a sticker after sending the merged PDF
                 await client.send_sticker(
                     chat_id=message.chat.id,
-                    sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
-                )
-
-        except Exception as e:
-            await progress_message.edit_text(f"❌ Failed to merge files: {e}")
-
-        finally:
-            # Reset the user's state
-            self.user_file_metadata.pop(user_id, None)
-            self.user_states.pop(user_id, None)
-            self.pending_filename_requests.pop(user_id, None)
+                    sticker="CAAC
 
 # Initialize the plugin
 merge_plugin = MergePlugin()
