@@ -22,7 +22,7 @@ class MergePlugin:
         self.user_states = {}  # Track user states
 
     async def reset_user_state(self, user_id: int):
-        await asyncio.sleep(120)  # 2 minutes
+        await asyncio.sleep(300)  # 5 minutes
         if user_id in self.user_file_metadata:
             self.user_file_metadata.pop(user_id, None)
             self.pending_filename_requests.pop(user_id, None)
