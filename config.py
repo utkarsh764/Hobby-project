@@ -11,7 +11,7 @@ DB_NAME = os.environ.get("DB_NAME","Z900")
 DB_URL = os.environ.get("DB_URL","mongodb+srv://uramit0001:EZ1u5bfKYZ52XeGT@cluster0.qnbzn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
 ADMIN = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '6803505727').split()]
-PORT = os.environ.get("PORT", "5000")
+PORT = os.environ.get("PORT", "6969")
 
 RENAME_MODE = bool(environ.get('RENAME_MODE', True)) # Set True or False
 ERROR_MESSAGE = bool(os.environ.get('ERROR_MESSAGE', False)) # Set True or False
