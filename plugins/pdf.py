@@ -15,13 +15,12 @@ logger = logging.getLogger(__name__)
 
 MAX_FILE_SIZE = 350 * 1024 * 1024  # 350MB
 
-# Global variables to replace class instance variables
 user_file_metadata = {}  # Store metadata for each user's files
 user_states = {}  # Track user states
 pending_filename_requests = {}  # Track pending filename requests
 
 async def reset_user_state(user_id: int):
-    await asyncio.sleep(120)  # 2 minutes
+    await asyncio.sleep(300)  # 2 minutes
     if user_id in user_file_metadata:
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
@@ -41,7 +40,7 @@ async def start_file_collection(client: Client, message: Message):
     user_file_metadata[user_id] = []  # Reset file list for the user
     user_states[user_id] = "collecting_files"  # Set user state
     await message.reply_text(
-        "**📤 Uᴘʟᴏᴀᴅ ʏᴏᴜʀ ғɪʟᴇs ɪɴ sᴇǫᴜᴇɴᴄᴇ, ᴛʏᴘᴇ /done ✅, ᴀɴᴅ ɢᴇᴛ ʏᴏᴜʀ ᴍᴇʀɢᴇᴅ PDF !! 🧾**"
+        "**📤 ɴᴏᴡ ꜱᴇɴᴅ ʏᴏᴜʀ ғɪʟᴇs ɪɴ sᴇǫᴜᴇɴᴄᴇ !! 🧾**"
     )
     # Start a timer to reset the state after 2 minutes
     asyncio.create_task(reset_user_state(user_id))
@@ -58,7 +57,7 @@ async def handle_pdf_metadata(client: Client, message: Message):
         return
 
     if len(user_file_metadata[user_id]) >= 20:
-        await message.reply_text("⚠️ You can upload up to 20 files. Type /done ✅ to merge them.")
+        await message.reply_text("⚠️ You can merge only 20 files at once. Type /done ✅ to merge them.")
         return
 
     if message.document.file_size > MAX_FILE_SIZE:
@@ -73,8 +72,8 @@ async def handle_pdf_metadata(client: Client, message: Message):
         }
     )
     await message.reply_text(
-        f"**➕ PDF ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ʟɪsᴛ! 📄 ({len(user_file_metadata[user_id])} files added so far.)**\n"
-        "**Sᴇɴᴅ ᴍᴏʀᴇ ғɪʟᴇs ᴏʀ ᴜsᴇ /done ✅ ᴛᴏ ᴍᴇʀɢᴇ ᴛʜᴇᴍ.**"
+        f"•**ᴛᴏᴛᴀʟ ꜰɪʟᴇꜱ: {len(user_file_metadata[user_id])} 📄**\n"
+        "•**/done: ᴛᴏ ᴍᴇʀɢᴇ ᴀʟʟ ꜰɪʟᴇꜱ ✅**"
     )
 
 async def handle_image_metadata(client: Client, message: Message):
@@ -92,8 +91,8 @@ async def handle_image_metadata(client: Client, message: Message):
         }
     )
     await message.reply_text(
-        f"➕ Image added to the list! 🖼️ ({len(user_file_metadata[user_id])} files added so far.)\n"
-        "Send more files or use /done ✅ to merge them."
+        f"•**ᴛᴏᴛᴀʟ ɪᴍᴀɢᴇꜱ: {len(user_file_metadata[user_id])} 🖼️\n"
+        "•**/done: ᴛᴏ ᴍᴇʀɢᴇ ᴀʟʟ ɪᴍᴀɢᴇꜱ ✅**"
     )
 
 async def merge_files(client: Client, message: Message):
