@@ -11,7 +11,7 @@ from pyrogram.types import Message
 from config import LOG_CHANNEL
 from helper.database import db
 
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
 
 MAX_FILE_SIZE = 350 * 1024 * 1024  # 350MB
 
