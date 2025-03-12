@@ -217,7 +217,17 @@ class MergePlugin:
                 # Send a sticker after sending the merged PDF
                 await client.send_sticker(
                     chat_id=message.chat.id,
-                    sticker="CAAC
+                    sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"  # Replace with your preferred sticker ID
+                )
+
+        except Exception as e:
+            await progress_message.edit_text(f"❌ Failed to merge files: {e}")
+
+        finally:
+            # Reset the user's state
+            self.user_file_metadata.pop(user_id, None)
+            self.user_states.pop(user_id, None)
+            self.pending_filename_requests.pop(user_id, None)
 
 # Initialize the plugin
 merge_plugin = MergePlugin()
