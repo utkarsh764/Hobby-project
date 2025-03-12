@@ -10,6 +10,7 @@ from PyPDF2 import PdfMerger
 from pyrogram.types import Message
 from config import LOG_CHANNEL
 from filters import user_filter
+from helper.database import db
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ user_states = {}  # Track user states
 pending_filename_requests = {}  # Track pending filename requests
 
 async def reset_user_state(user_id: int):
-    await asyncio.sleep(300)  # 2 minutes
+    await asyncio.sleep(300)  # 5 minutes
     if user_id in user_file_metadata:
         user_file_metadata.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
@@ -136,13 +137,34 @@ async def handle_filename(client: Client, message: Message):
                 temp_thumbnail.write(response.content)
                 thumbnail_path = temp_thumbnail.name
 
+            # Process the thumbnail (resize and convert to JPEG)
+            Image.open(thumbnail_path).convert("RGB").save(thumbnail_path)
+            img = Image.open(thumbnail_path)
+            img.resize((320, 320))
+            img.save(thumbnail_path, "JPEG")
+
         except Exception as e:
-            await message.reply_text(f"❌ Error while downloading the thumbnail: {e}")
+            await message.reply_text(f"❌ Error while downloading or processing the thumbnail: {e}")
             return
 
     else:
         filename_without_thumbnail = custom_filename
         thumbnail_path = None  # No thumbnail provided
+
+        # Fetch thumbnail from the database if available
+        c_thumb = await db.get_thumbnail(user_id)  # Assuming db.get_thumbnail is defined
+        if c_thumb:
+            try:
+                # Download the thumbnail from the database
+                thumbnail_path = await client.download_media(c_thumb)
+                # Process the thumbnail (resize and convert to JPEG)
+                Image.open(thumbnail_path).convert("RGB").save(thumbnail_path)
+                img = Image.open(thumbnail_path)
+                img.resize((320, 320))
+                img.save(thumbnail_path, "JPEG")
+            except Exception as e:
+                logger.error(f"Error processing thumbnail from database: {e}")
+                thumbnail_path = None  # Fallback to no thumbnail
 
     # Proceed to merge the files
     progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... ⏰**")
@@ -171,26 +193,29 @@ async def handle_filename(client: Client, message: Message):
 
             # Send the merged file with or without the thumbnail
             await asyncio.gather(
-                h
                 client.send_document(
-                chat_id=message.chat.id,
-                document=output_file,
-                thumb=thumbnail_path if thumbnail_path else None,  # Set thumbnail if available
-                caption="**🎉 Here is your merged PDF 📄.**",
-            ),        
+                    chat_id=message.chat.id,
+                    document=output_file,
+                    thumb=thumbnail_path if thumbnail_path else None,  # Set thumbnail if available
+                    caption="**🎉 Here is your merged PDF 📄.**",
+                ),
                 client.send_document(
-                chat_id=LOG_CHANNEL,
-                document=output_file,
-                thumb=thumbnail_path if thumbnail_path else None,  # Set thumbnail if available
-                caption=(
-                    f">**📑 Merged PDF**\n"
-                    f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
-                    f">**🪪 ID :- `{message.from_user.id}`**"
+                    chat_id=LOG_CHANNEL,
+                    document=output_file,
+                    thumb=thumbnail_path if thumbnail_path else None,  # Set thumbnail if available
+                    caption=(
+                        f">**📑 Merged PDF**\n"
+                        f">**☃️ By :- [{message.from_user.first_name}](tg://user?id={message.from_user.id})**\n"
+                        f">**🪪 ID :- `{message.from_user.id}`**"
+                    ),
                 ),
             )
-                    )
-            # Send a sticker after sending the merged PDF and Delete progress message 
-            await client.send_sticker(chat_id=message.chat.id, sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE")
+
+            # Send a sticker after sending the merged PDF and delete progress message
+            await client.send_sticker(
+                chat_id=message.chat.id,
+                sticker="CAACAgIAAxkBAAEWFCFnmnr0Tt8-3ImOZIg9T-5TntRQpAAC4gUAAj-VzApzZV-v3phk4DYE"
+            )
             await progress_message.delete()
 
     except Exception as e:
@@ -201,6 +226,10 @@ async def handle_filename(client: Client, message: Message):
         user_file_metadata.pop(user_id, None)
         user_states.pop(user_id, None)
         pending_filename_requests.pop(user_id, None)
+
+        # Clean up temporary files
+        if thumbnail_path and os.path.exists(thumbnail_path):
+            os.remove(thumbnail_path)
 
 # Register handlers
 @Client.on_message(filters.command(["merge"]) & user_filter)
