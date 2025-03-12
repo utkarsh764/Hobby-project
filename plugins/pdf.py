@@ -9,7 +9,7 @@ from pyrogram import Client, filters
 from PyPDF2 import PdfMerger
 from pyrogram.types import Message
 from config import LOG_CHANNEL
-from helper.database import db
+from filters import user_filter
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ class MergePlugin:
         self.user_states = {}  # Track user states
 
     async def reset_user_state(self, user_id: int):
-        await asyncio.sleep(300)  # 5 minutes
+        await asyncio.sleep(120)  # 2 minutes
         if user_id in self.user_file_metadata:
             self.user_file_metadata.pop(user_id, None)
             self.pending_filename_requests.pop(user_id, None)
@@ -110,7 +110,7 @@ class MergePlugin:
     async def handle_filename(self, client: Client, message: Message):
         user_id = message.from_user.id
 
-    # Only process if the user is in the "waiting_for_filename" state
+        # Only process if the user is in the "waiting_for_filename" state
         if user_id not in self.user_states or self.user_states[user_id] != "waiting_for_filename":
             return
 
@@ -120,36 +120,33 @@ class MergePlugin:
             await message.reply_text("❌ Filename cannot be empty. Please try again.")
             return
 
-        thumbnail_path = None  # Default: No thumbnail
-
         # Check if the filename contains a thumbnail link
         match = re.match(r"(.*)\s*-t\s*(https?://\S+)", custom_filename)
         if match:
             filename_without_thumbnail = match.group(1).strip()
             thumbnail_link = match.group(2).strip()
 
-        # Validate and download the thumbnail link
+            # Validate the thumbnail link
             try:
                 response = requests.get(thumbnail_link, timeout=10)
-                if response.status_code == 200:
-                    with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_thumbnail:
-                        temp_thumbnail.write(response.content)
-                        thumbnail_path = temp_thumbnail.name  # Save the path
-                else:
+                if response.status_code != 200:
                     await message.reply_text("❌ Failed to fetch the image. Please provide a valid thumbnail link.")
                     return
+
+                # Save the image to a temporary file
+                with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_thumbnail:
+                    temp_thumbnail.write(response.content)
+                    thumbnail_path = temp_thumbnail.name
+
             except Exception as e:
                 await message.reply_text(f"❌ Error while downloading the thumbnail: {e}")
                 return
 
         else:
             filename_without_thumbnail = custom_filename
-            # If no thumbnail link was provided, check the database for a saved thumbnail
-            user_thumbnail = db.get_thumbnail(user_id)  # Retrieve from DB
-            if user_thumbnail:
-                thumbnail_path = user_thumbnail  # Use the stored thumbnail
+            thumbnail_path = None  # No thumbnail provided
 
-    # Proceed to merge the files
+        # Proceed to merge the files
         progress_message = await message.reply_text("**🛠️ Merging your files... Please wait... ⏰**")
 
         try:
@@ -161,16 +158,10 @@ class MergePlugin:
                 for index, file_data in enumerate(self.user_file_metadata[user_id], start=1):
                     if file_data["type"] == "pdf":
                         file_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
-                        if not os.path.exists(file_path):
-                            await message.reply_text(f"❌ File {file_data['file_name']} not found. Please try again.")
-                            return
                         merger.append(file_path)
                         await self.show_progress_bar(progress_message, index, total_files)  # Update progress bar
                     elif file_data["type"] == "image":
                         img_path = await client.download_media(file_data["file_id"], file_name=os.path.join(temp_dir, file_data["file_name"]))
-                        if not os.path.exists(img_path):
-                            await message.reply_text(f"❌ Image {file_data['file_name']} not found. Please try again.")
-                            return
                         image = Image.open(img_path).convert("RGB")
                         img_pdf_path = os.path.join(temp_dir, f"{os.path.splitext(file_data['file_name'])[0]}.pdf")
                         image.save(img_pdf_path, "PDF")
@@ -233,7 +224,7 @@ class MergePlugin:
 merge_plugin = MergePlugin()
 
 # Register handlers
-@Client.on_message(filters.command(["merge"]))
+@Client.on_message(filters.command(["merge"]) & user_filter)
 async def start_file_collection(client: Client, message: Message):
     await merge_plugin.start_file_collection(client, message)
 
@@ -249,13 +240,13 @@ async def handle_image_metadata(client: Client, message: Message):
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "collecting_files":
         await merge_plugin.handle_image_metadata(client, message)
 
-@Client.on_message(filters.command(["done"]))
+@Client.on_message(filters.command(["done"]) & user_filter)
 async def merge_files(client: Client, message: Message):
     await merge_plugin.merge_files(client, message)
 
-@Client.on_message(filters.text & filters.private & ~filters.command(["start", "set_thumb", "del_thumb", "view_thumb", "see_caption", "del_caption", "set_caption", "rename", "cancel", "ask", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast", "rename"]) & ~filters.regex("https://t.me/"))
+@Client.on_message(filters.text & filters.private & ~filters.command(["start", "set_thumb", "del_thumb", "view_thumb", "see_caption", "del_caption", "set_caption", "rename", "cancel", "ask", "id", "set", "telegraph", "stickerid", "accept", "users", "broadcast", "rename"]) & ~filters.regex("https://t.me/"))           
 async def handle_filename(client: Client, message: Message):
     user_id = message.from_user.id
     if user_id in merge_plugin.user_states and merge_plugin.user_states[user_id] == "waiting_for_filename":
         await merge_plugin.handle_filename(client, message)
-
+                        
