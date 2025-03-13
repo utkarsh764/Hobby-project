@@ -44,7 +44,6 @@ broadcast - 📩 sᴇɴᴅ ʙʀᴏᴀᴅᴄᴀsᴛ (ᴏᴡɴᴇʀ)
 * `ADMIN` - AUTH or bot controllers id's multiple id use space to split 
 * `DB_URL`  - Mongo Database URL from https://cloud.mongodb.com/
 * `DB_NAME`  - Your database name from mongoDB. Default will be 'Z900'
-* `FORCE_SUB` - your force sub channel username without @ 
 * `START_PIC` - start message photo
 * `Port` - 8080
 * `FORCE_PIC`
