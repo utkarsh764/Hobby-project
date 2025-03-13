@@ -7,8 +7,10 @@ from config import RENAME_MODE
 import humanize
 import random
 from filters import user_filter
+from plugins.Fsub import auth_check
 
 @Client.on_message(filters.private & filters.command("rename") & user_filter)
+@auth_check
 async def rename_start(client, message):
     if RENAME_MODE == False:
         return 
