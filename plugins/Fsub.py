@@ -5,28 +5,6 @@ from config import *
 
 #=====================================================================================
 
-@Client.on_message(filters.private & filters.command)
-async def check_subscription(client, message):
-    """
-    Checks if the user is subscribed before processing any command.
-    """
-    if AUTH_CHANNEL:
-        btn = await is_subscribed(client, message.from_user.id, AUTH_CHANNEL)
-        if btn:  # If user is not subscribed
-            username = (await client.get_me()).username
-            start_param = message.command[1] if len(message.command) > 1 else "true"
-            btn.append([InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", url=f"https://t.me/{username}?start={start_param}")])
-
-            await message.reply_photo(
-                    photo=FORCE_PIC,  # Using the variable FORCE_PIC
-                    caption=f"<b>👋 Hello {message.from_user.mention},\nʏᴏᴜ ɴᴇᴇᴅ ᴊᴏɪɴ Mʏ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ᴜsᴇ ᴍᴇ 😉\n\nPʀᴇss ᴛʜᴇ Fᴏʟʟᴏᴡɪɴɢ Bᴜᴛᴛᴏɴ ᴛᴏ ᴊᴏɪɴ Nᴏᴡ 👇</b>",
-                    reply_markup=InlineKeyboardMarkup(btn)
-            )
-            return  # Stop further execution
-
-    await client.process_message(message)  # Continue normal execution if user is subscribed
-        
-#=====================================================================================
 async def is_subscribed(bot, query, channel):
     btn = []
     for id in channel:
@@ -36,6 +14,23 @@ async def is_subscribed(bot, query, channel):
         except UserNotParticipant:
             btn.append([InlineKeyboardButton(f'Join {chat.title}', url=chat.invite_link)])
         except Exception as e:
-            pass
+            print(e)
     return btn
-  
+
+def auth_check(func):
+    async def wrapper(client, message):
+        if AUTH_CHANNEL:
+            btn = await is_subscribed(client, message, AUTH_CHANNEL)
+            if btn:
+                username = (await client.get_me()).username
+                start_param = message.command[1] if len(message.command) > 1 else "true"
+                btn.append([InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", url=f"https://t.me/{username}?start={start_param}")])
+
+                await message.reply_photo(
+                    photo=FORCE_PIC,  # Using the variable FORCE_PIC
+                    caption=f"<b>👋 Hello {message.from_user.mention},\nʏᴏᴜ ɴᴇᴇᴅ ᴊᴏɪɴ Mʏ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ᴜsᴇ ᴍᴇ 😉\n\nPʀᴇss ᴛʜᴇ Fᴏʟʟᴏᴡɪɴɢ Bᴜᴛᴛᴏɴ ᴛᴏ ᴊᴏɪɴ Nᴏᴡ 👇</b>",
+                    reply_markup=InlineKeyboardMarkup(btn)
+                )
+                return
+        return await func(client, message)
+    return wrapper
