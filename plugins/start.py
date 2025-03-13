@@ -25,27 +25,16 @@ async def is_subscribed(bot, query, channel):
             pass
     return btn
 #=====================================================================================
-
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
-    # Run reaction in the background
-    async def react_message():
-        try:
-            await message.react(emoji=random.choice(REACTIONS), big=True)
-        except:
-            pass    
-
-    asyncio.create_task(react_message())  # Runs reaction in background
-
-    # Run DB check and user addition in the background
-    async def add_user_to_db():
-        if not await db.is_user_exist(message.from_user.id):
-            await db.add_user(message.from_user.id)
-            total_users = await db.total_users_count()
-            await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
-
-    asyncio.create_task(add_user_to_db())  # Runs in the background
-
+    try:
+        await message.react(emoji=random.choice(REACTIONS), big=True)
+    except:
+        pass    
+    if not await db.is_user_exist(message.from_user.id):
+        await db.add_user(message.from_user.id)
+        total_users = await db.total_users_count()
+        await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
     if AUTH_CHANNEL:
         try:
             btn = await is_subscribed(client, message, AUTH_CHANNEL)
@@ -55,14 +44,13 @@ async def start(client, message):
                 btn.append([InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", url=f"https://t.me/{username}?start={start_param}")])
                 
                 await message.reply_photo(
-                    photo=FORCE_PIC,
+                    photo=FORCE_PIC,  # Using the variable FORCE_PIC
                     caption=f"<b>👋 Hello {message.from_user.mention},\nʏᴏᴜ ɴᴇᴇᴅ ᴊᴏɪɴ Mʏ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ᴜsᴇ ᴍᴇ 😉\n\nPʀᴇss ᴛʜᴇ Fᴏʟʟᴏᴡɪɴɢ Bᴜᴛᴛᴏɴ ᴛᴏ ᴊᴏɪɴ Nᴏᴡ 👇</b>",
                     reply_markup=InlineKeyboardMarkup(btn)
                 )
                 return
         except Exception as e:
             print(e)
-
     txt = (
         f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
