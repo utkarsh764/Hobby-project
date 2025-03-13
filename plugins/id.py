@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-import plugins.Fsub
+from plugins.Fsub import check_subscription
 
 
 @Client.on_message(filters.command("id"))
