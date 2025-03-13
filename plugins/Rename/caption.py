@@ -1,3 +1,6 @@
+# Don't Remove Credit @VJ_Botz
+# Subscribe YouTube Channel For Amazing Bot @Tech_VJ
+# Ask Doubt on telegram @KingVJ01
 
 from pyrogram import Client, filters 
 from helper.database import db
@@ -31,3 +34,6 @@ async def see_caption(client, message):
        await message.reply_text(f"**Your Caption:-**\n\n`{caption}`")
     else:
        await message.reply_text("😔**Sorry ! No Caption found...**😔")
+
+
+        
