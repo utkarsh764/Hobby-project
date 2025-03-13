@@ -11,6 +11,8 @@ from pyrogram.types import Message
 from config import LOG_CHANNEL
 from filters import user_filter
 from helper.database import db
+import plugins.Fsub
+
 
 logger = logging.getLogger(__name__)
 
