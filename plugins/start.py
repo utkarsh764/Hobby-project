@@ -13,17 +13,7 @@ LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 👨‍👨‍👦‍👦 ᴛᴏᴛᴀʟ :~ {}</b></blockquote>"""
 
 #=====================================================================================
-async def is_subscribed(bot, query, channel):
-    btn = []
-    for id in channel:
-        chat = await bot.get_chat(int(id))
-        try:
-            await bot.get_chat_member(id, query.from_user.id)
-        except UserNotParticipant:
-            btn.append([InlineKeyboardButton(f'Join {chat.title}', url=chat.invite_link)])
-        except Exception as e:
-            pass
-    return btn
+
 #=====================================================================================
 @Client.on_message(filters.private & filters.command("start"))
 async def start(client, message):
@@ -35,22 +25,6 @@ async def start(client, message):
         await db.add_user(message.from_user.id)
         total_users = await db.total_users_count()
         await client.send_message(LOG_CHANNEL, LOG_TEXT.format(message.from_user.mention, message.from_user.id, total_users))
-    if AUTH_CHANNEL:
-        try:
-            btn = await is_subscribed(client, message, AUTH_CHANNEL)
-            if btn:
-                username = (await client.get_me()).username
-                start_param = message.command[1] if len(message.command) > 1 else "true"
-                btn.append([InlineKeyboardButton("🔄 Rᴇғʀᴇsʜ", url=f"https://t.me/{username}?start={start_param}")])
-                
-                await message.reply_photo(
-                    photo=FORCE_PIC,  # Using the variable FORCE_PIC
-                    caption=f"<b>👋 Hello {message.from_user.mention},\nʏᴏᴜ ɴᴇᴇᴅ ᴊᴏɪɴ Mʏ ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ ɪɴ ᴏʀᴅᴇʀ ᴛᴏ ᴜsᴇ ᴍᴇ 😉\n\nPʀᴇss ᴛʜᴇ Fᴏʟʟᴏᴡɪɴɢ Bᴜᴛᴛᴏɴ ᴛᴏ ᴊᴏɪɴ Nᴏᴡ 👇</b>",
-                    reply_markup=InlineKeyboardMarkup(btn)
-                )
-                return
-        except Exception as e:
-            print(e)
     txt = (
         f"> **✨👋🏻 Hey {message.from_user.mention} !!**\n\n"
         f"**🔋 ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇ ʙᴏᴛ ᴅᴇꜱɪɢɴᴇᴅ ᴛᴏ ᴀꜱꜱɪꜱᴛ ʏᴏᴜ. ɪ ᴄᴀɴ ᴍᴇʀɢᴇ ᴘᴅꜰ/ɪᴍᴀɢᴇꜱ , ʀᴇɴᴀᴍᴇ ʏᴏᴜʀ ꜰɪʟᴇꜱ ᴀɴᴅ ᴍᴜᴄʜ ᴍᴏʀᴇ.**\n\n"
