@@ -4,7 +4,6 @@ from pyrogram import Client
 from config import *
 from aiohttp import web
 from plugins.web_support import web_server
-from plugins.Fsub import check_subscription
 
 logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
