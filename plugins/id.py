@@ -1,5 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
+import plugins.Fsub
 
 
 @Client.on_message(filters.command("id"))
