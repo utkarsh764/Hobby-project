@@ -11,7 +11,7 @@ from pyrogram.types import Message
 from config import LOG_CHANNEL
 from filters import user_filter
 from helper.database import db
-import plugins.Fsub
+from plugins.Fsub import auth_check
 
 
 logger = logging.getLogger(__name__)
@@ -235,6 +235,7 @@ async def handle_filename(client: Client, message: Message):
 
 # Register handlers
 @Client.on_message(filters.command(["merge"]) & user_filter)
+@auth_check
 async def start_file_collection_handler(client: Client, message: Message):
     await start_file_collection(client, message)
 
@@ -251,6 +252,7 @@ async def handle_image_metadata_handler(client: Client, message: Message):
         await handle_image_metadata(client, message)
 
 @Client.on_message(filters.command(["done"]) & user_filter)
+@auth_check
 async def merge_files_handler(client: Client, message: Message):
     await merge_files(client, message)
 
