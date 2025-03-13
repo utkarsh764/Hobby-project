@@ -6,6 +6,8 @@ from helper.txt import mr
 from helper.database import db
 from pyrogram.errors import *
 import random
+import plugins.Fsub
+
 
 LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 <blockquote><b>☃️ Nᴀᴍᴇ :~ {}
