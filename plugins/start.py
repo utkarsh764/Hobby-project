@@ -6,7 +6,7 @@ from helper.txt import mr
 from helper.database import db
 from pyrogram.errors import *
 import random
-import plugins.Fsub
+from plugins.Fsub import auth_check
 
 
 LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
@@ -18,6 +18,7 @@ LOG_TEXT = """<blockquote><b>#NewUser ॥ @z900_Robot</b></blockquote>
 
 #=====================================================================================
 @Client.on_message(filters.private & filters.command("start"))
+@auth_check
 async def start(client, message):
     try:
         await message.react(emoji=random.choice(REACTIONS), big=True)
@@ -48,7 +49,7 @@ async def start(client, message):
 async def set_commands(client: Client, message: Message):
     await client.set_bot_commands([
         BotCommand("start", "🤖 Start the bot"),
-        BotCommand("merge", "🛠 Start PDF merge"),
+        BotCommand("merge", "🛠 Start PDF merge",
         BotCommand("done", "📂 Merge PDFs"),
         BotCommand("telegraph", "🌐 Get Telegraph link"),
         BotCommand("stickerid", "🎭 Get sticker ID"),
