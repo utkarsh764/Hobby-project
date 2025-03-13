@@ -49,7 +49,7 @@ async def start(client, message):
 async def set_commands(client: Client, message: Message):
     await client.set_bot_commands([
         BotCommand("start", "🤖 Start the bot"),
-        BotCommand("merge", "🛠 Start PDF merge",
+        BotCommand("merge", "🛠 Start PDF merge"),
         BotCommand("done", "📂 Merge PDFs"),
         BotCommand("telegraph", "🌐 Get Telegraph link"),
         BotCommand("stickerid", "🎭 Get sticker ID"),
