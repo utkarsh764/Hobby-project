@@ -1,9 +1,10 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from plugins.Fsub import check_subscription
+from plugins.Fsub import auth_check
 
 
 @Client.on_message(filters.command("id"))
+@auth_check
 async def id_command(client: Client, message: Message):
     """
     Handler for the /id command.
